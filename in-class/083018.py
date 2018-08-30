@@ -11,6 +11,7 @@ U.S. Government Open Data at https://www.data.gov/
 
 from sqlite3 import *
 from pprint import pprint
+import pandas as pd
 
 filename = 'airports'
 fileext = 'dat'
@@ -67,4 +68,21 @@ with open(fn, 'r', encoding='utf-8') as f:
             print(e)
 
 c.commit()
+
+pd.set_option('display.width', 1000)
+pd.set_option('display.max_columns', 500)
+
+print(pd.read_sql_query("""
+SELECT 
+    id, name, lat, lon
+FROM 
+	airports 
+WHERE 
+	lat >= 3
+	AND
+	lat <= 6
+ORDER BY 
+	lat ASC;
+	""", c))
+
 c.close()
