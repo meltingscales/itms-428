@@ -16,13 +16,55 @@ filename = 'airports'
 fileext = 'dat'
 dbext = 'db'
 
-c = connect('.'.join((filename, dbext)))
+dbname = '.'.join((filename, dbext))
+
+print(f"Connecting to '{dbname}'.")
+c = connect(dbname)
 
 try:
-    pass
-except Exception as e:
+    c.execute('''
+    CREATE TABLE airports(
+        id      INTEGER PRIMARY KEY NOT NULL,
+        name    STRING,
+        loc1    STRING,
+        loc2    STRING,
+        code1   STRING,
+        code2   STRING,
+        lat     DOUBLE,
+        lon     DOUBLE,
+        num1    INTEGER,
+        num2    INTEGER,
+        char1   STRING,
+        loc3    STRING,
+        type1   STRING,
+        type2   STRING
+    )
+    ''')
+except OperationalError as e:  # i.e. table already exists
+    print(str(e))
     pass
 
-with open('.'.join((filename, fileext)), 'r', encoding='utf-8') as f:
+fn = '.'.join((filename, fileext))
+
+print(f"Opening '{fn}'")
+
+with open(fn, 'r', encoding='utf-8') as f:
     for line in f.readlines():
-        print(str(line))
+        try:
+            line = line.strip()  # remove whitespace
+            line = line.replace(r'\N', r'null')  # why do they put \N? we will never know!
+            line = line.replace(r'\"', r"'")  # :>)
+
+            ls = line.split(',')
+
+            sql = 'INSERT INTO airports VALUES(' + line + ");"
+            print(sql)
+
+            c.execute(sql)
+
+        except Exception as e:
+            print(line)
+            print(e)
+
+c.commit()
+c.close()
