@@ -1,0 +1,197 @@
+#==============================================================
+#  sidemenus.tcltk
+#
+#  University of Northumbria
+#  Andreas Pfiz
+#  June 97
+#
+#  changes by Sebastian Kuschel
+#  bugfixing and directory changing added
+#  reorganisation of the header by Mesel Tesfaiesus, Nov. 2001
+#===============================================================
+ 
+# This procedure buils a sidemenu out of the specificatoin file and displays
+# it on the screen. The parameters are:
+# frame (in) : The frame whre the menu goes into
+# clist (out): The list containing the menu entry, the Raqeul statement and
+#               the cursor movement
+# name (in)  : The name of the menue appearing in the heading of it
+# file (in)  : The name of the file conatinning the specificaton of the menu
+# bwidth (in): The width of the buttons in characters.
+
+proc build_sidemenu {frame clist name file bwidth} {
+   global TCLTK_DIR CURRENT_DIR
+   
+# checking, if the Specification-file exists. If not, display error-message
+   #set RaquelDir [GetSystemDir]
+   set RaquelDir ${TCLTK_DIR}
+   cd $RaquelDir
+   if [catch {open $file r} fileid] {
+       tk_dialog .ferror "" "$name-Menu-Specification not found !" warning 0 Ok
+       return
+   } else {
+
+# now create a list out of the contents of the file. The string "build" contents
+# all Elements needed for one button, separated with comas
+
+       set cl {}
+       while {![eof $fileid]} {
+          gets $fileid build
+          if {$build != ""} {
+              set leftcoma [string first "," $build]
+              set rightcoma [string last "," $build]
+              lappend cl [string range $build 0 [expr $leftcoma -1]]
+              lappend cl [string range $build [expr $leftcoma +1] \
+              [expr $rightcoma -1]]
+              lappend cl [string range $build [expr $rightcoma +1] end]  
+          } 
+       }
+   }    
+# if the menu already mapped on the screen then return, otherwise destroy it and
+# replace with the new menu   
+   if {[winfo exists $frame.cframe]} {
+       if {[$frame.cframe.heading cget -text] == $name} {return} 
+       destroy $frame.cframe
+   }
+# now a further frame "cframe" inside the menuframe, is created, to leave
+# the actual menuframe untouched. A canvas widget, a scrollbar widget and a 
+# heading are 
+# packed inside the frame. The canvas widget contains the buttons and if the 
+# menu gets longer than the menuframe itself, only so much buttons are displayed
+# wich fit into the menuframe and a scrollbar is attached to the menu.
+
+   set cframe [frame $frame.cframe -relief ridge -borderwidth 2]
+   set scroll [scrollbar $cframe.scroll -command "$cframe.canvas yview" ]
+   set mc [canvas $cframe.canvas -yscrollcommand "$cframe.scroll set"]
+   button $cframe.heading -text $name -padx 8 -relief flat
+   pack $cframe.heading
+   frame $mc.fram 
+   $mc create window 0 0 -anchor nw -window $mc.fram 
+   for {set i 0} {$i < [llength $cl] / 3} {incr i} {
+      set label [lindex $cl [expr $i*3]]
+
+# If the entry ends with a minus, the button is disabled
+
+      if {[string index $label [expr [string length $label] -1]] =="-"} {
+         set label [string range $label 0 [expr [string length $label] -2]]
+         button $mc.fram.but$i -text $label -justify left -anchor nw \
+                -width $bwidth -state disabled
+      } else {
+         button $mc.fram.but$i -text $label -justify left -anchor nw \
+                -width $bwidth 
+      }
+      pack $mc.fram.but$i 
+      set entry [lindex $cl [expr $i *3 +1]]
+      set raquel [lindex $cl [expr $i *3 +2]]
+      set com [subst {edit_SendString {$entry} {$raquel}}]
+      $mc.fram.but$i configure -command $com 
+   }   
+
+# pack the menu (sub-) frame, pack the canvas and wait until the menu is visible
+   
+   pack $cframe -side top -fill x
+   pack $mc -side left -fill both -expand true
+   set child [lindex [pack slaves $mc.fram] 0 ]
+   tkwait visibility $child
+
+# now the height of the menu is calculated that the height of the menu is 
+# a multiple of the height of one button. The scrollregion of the canvas is set
+# as well as the size of a scrollstep if the slider is used (if visible).
+
+   set height [winfo height $mc.fram]
+   set width [winfo width $mc.fram] 
+   set frameheight [winfo height $frame] 
+   set incr [winfo height $child]
+   $mc config -yscrollincrement $incr
+   $mc config -scrollregion "0 0 $width $height"
+
+# now it is checked, if the menu is bigger then the frame where it goes in.
+# If it is bigger, then a scrollbar is displayed and the buttons are set to
+# be smaller to make place for the scrollbar.
+
+   set frameheight [winfo height $frame] 
+   set maxbuttons [expr int( ($frameheight-8) / $incr) -1 ]
+   if {$height > $maxbuttons * $incr} {
+       set height [expr $maxbuttons * $incr]
+       pack forget $mc
+       pack $scroll -side right -fill y 
+       pack $mc -side left -fill x -expand true
+       foreach button [pack slaves $mc.fram] {
+           $button configure -width [expr $bwidth-3]
+           pack $button
+       }
+   } 
+   $mc config -height $height -width $width  
+   #set WorkDir [GetWorkDir]
+   set WorkDir ${CURRENT_DIR}
+   cd $WorkDir
+}
+
+# This procedure destroys the submenu which is visible and it is triggered by
+# clicking in the header of the Assignment menu.
+
+proc clear_asgmenu {frame} {
+
+   if {[winfo exists $frame.amframe.cframe]} {
+      destroy $frame.amframe.cframe}
+}
+
+# This procedure sets up the sidemenus. The parameters are:
+# fr (in): The name of the frame where the Assignment menu, the Operator menu 
+#          and the Data Dictionary menu goes in.
+# top (in): The frame where the submenus of the assignment menu goes in
+# bottom (in) : The frame whre the submenu of the data dictionary menu goes in
+# h (in) : the height of fr
+# w (in) the width of w
+
+proc menu_initframe {fr top h w} {
+    global amf 
+
+# create four frames, the first holds the assignment menu, the second for a gap # between the assignment menu and the operator menu, the third for the
+# operator menu and the fourth for the data dictionary 
+ 
+    set asg [frame $fr.assign -borderwidth 2 -relief ridge]
+    set pad [frame $fr.pad -height 0 -width $w]
+    pack propagate $pad false 
+    set op [frame $fr.operator ]
+    set dict [frame $fr.dictionary -relief ridge -borderwidth 2]
+
+#create a frame for the submenus of the assignment menu
+    set amf [frame $top.amframe -height [expr ($h)/1] -width [expr $w / 2]]
+    pack propagate $amf false
+
+	# Creating the assignment menu
+    button $asg.heading -text Assignments -relief flat \
+           -command "clear_asgmenu $top" -pady 4 
+    frame $asg.bframe
+    button $asg.bframe.action -text Value -relief raised -width 18 \
+           -command {build_sidemenu $amf ac "Value" "action.menu" 18}
+    button $asg.bframe.integrity -text Constraint -relief raised -width 18 \
+           -command {build_sidemenu $amf ic "Constraint" "integrity.menu" 18}
+    button $asg.bframe.storage -text "Physical Binding" -relief raised -width 18 \
+           -command {build_sidemenu $amf sc "Physical Binding" "storage.menu" 18}
+    button $asg.bframe.database -text Database -relief raised -width 18 \
+           -command {build_sidemenu $amf dc "Database" "database.menu" 18}
+
+# pack all the widgets
+    pack $asg -side top -fill x
+    pack $pad -side top
+    pack $amf -side top -fill x
+    pack $asg.heading
+    pack $asg.bframe 
+    pack $asg.bframe.action 
+    pack $asg.bframe.integrity 
+    pack $asg.bframe.storage  
+    pack $asg.bframe.database 
+    pack $op -fill both -expand true
+
+# display the operator menu
+    build_sidemenu $op oc "Operator" "operator.menu" 18
+    pack $op -fill none -expand false
+    update idletasks
+# calculate the height of the padding frame 
+    set pheight [expr ($h-([winfo height $asg]+\
+                [winfo height $op]+[winfo height $dict]))/2-12]
+# resize the padding frame
+    $pad configure -height $pheight
+}

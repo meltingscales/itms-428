@@ -1,0 +1,4 @@
+s  <--Retrieve Suppliers  <--Insert { { SupplierName <-- 'Toshiba'; SID <-- 'S11'; PType <-- 4; Location <-- 'Dresden' } }
+s  <--Retrieve Suppliers   <--Delete  { { SupplierName <-- 'Toshiba'; SID <-- 'S11'; PType <-- 4; Location <-- 'Dresden' } }
+s  <--Retrieve Suppliers  <--Insert { { SupplierName <-- 'Toshiba'; SID <-- 'S11'; PType <-- 4; Location <-- 'Dresden' } }
+s  <--Retrieve Suppliers   <--Delete Suppliers  Restrict[ SupplierName = 'Toshiba'  ]

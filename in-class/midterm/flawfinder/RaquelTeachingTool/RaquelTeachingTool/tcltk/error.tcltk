@@ -1,0 +1,51 @@
+#==============================================================
+#  error.tcltk
+#
+#  Displaying the errors in the error frame.
+#
+#  University of Northumbria
+#  Guillaume Renard
+#  March 2006
+#===============================================================
+
+# This procedure creates the error window in the given frame 'we'.
+proc error_initframe {we} {
+   global error
+
+   #creating a text widget and a scrollbar
+   set error [text $we.error  -exportselection 0 -wrap none \
+     -yscrollcommand [list $we.yscroll set] \
+     -xscrollcommand [list $we.xscroll set] -state disabled \
+     -font fixed]
+
+   scrollbar $we.yscroll -command [list $we.error yview]
+   scrollbar $we.xscroll -orient horizontal -command [list $we.error xview]
+   pack $we.yscroll -side right -fill y
+   pack $we.xscroll -side bottom -fill x
+   pack $error -side left -fill both
+}
+
+# This procedure allows error strings to be inserted in the error frame.
+# The parameter "statement" contains the string to be inserted at the end
+# of the error list, followed by the error string ("errstring") parameter.
+proc error_SendString {statement errstring} {
+   global error
+
+   $error configure -state normal
+   $error insert end "\n"
+   $error insert end "\n"
+   $error insert end $statement
+   $error insert end $errstring
+   $error see insert
+   $error configure -state disabled
+}
+
+# This procedure clears the current content of the error frame
+proc error_Clear {} {
+    global error
+
+    $error configure -state normal 
+    $error delete 1.0 end
+    $error configure -state disabled
+}
+

@@ -1,0 +1,65 @@
+#!/usr//bin/wish
+
+#=============================================================================
+#  raquel.tcltk
+#
+#  The  R A Q U E L  User GUI
+#
+#  The GUI is designed to demonstrate and teach the RAQUEL notation.
+#
+# 
+#  This file defines the top-level window +
+#    the source files for all the facilities appearing in the Raquel GUI.
+#
+#  David Livingstone.
+#  29 April 1997.
+#
+#  Developed using Tcl 7.6 and Tk 4.2.
+#
+#  Header reorganised by Mesel Tesfaiesus, Nov. 2001.
+#  Error frame added by Guillaume Renard, Mar. 2006.
+#  Sidemenus amended by David Livingstone, May 2009.
+#
+#  Version 2.PoC.
+#=============================================================================
+
+# Create a top-level window in which to run 'Raquel'.  Use the variable
+# RAQUEL to set the title so that the title can be changed later to include
+# the database name.
+wm title . [set RAQUEL "R  A  Q  U  E  L"]
+
+# Find out the size of the root window, and set the top-level window to be 
+# 95% of this.
+# Height modified by G. Renard to 90%
+set xdim [expr [winfo screenwidth .]]
+set ydim [expr (90*[winfo screenheight .])/100 ]
+
+wm maxsize . $xdim $ydim
+wm minsize . $xdim $ydim
+
+# Set up the colors belonging to the Raquel-Colourscheme
+option add *Background grey85
+option add *Foreground black
+option add *activeForeground black
+option add *activeBackground grey85
+option add *selectBackground black
+option add *selectForeground white
+option add *disabledForeground grey60
+
+#Set up the default font for all text
+option add *font *-helvetica-bold-r-*-12-*
+
+# Set up the sidemenus
+source ${TCLTK_DIR}sidemenus.tcltk
+
+# Set up the editor-frame
+source ${TCLTK_DIR}editor.tcltk
+
+# Set up the resource-frame
+source ${TCLTK_DIR}result.tcltk
+
+# Set up the error-frame
+source ${TCLTK_DIR}error.tcltk
+
+# Set up the top-level window.
+source ${TCLTK_DIR}topwindow.tcltk

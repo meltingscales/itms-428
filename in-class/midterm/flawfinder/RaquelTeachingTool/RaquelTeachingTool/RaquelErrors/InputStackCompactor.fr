@@ -1,0 +1,2 @@
+"Erreur de compacteur : Operator non soutenu"
+"Erreur de compacteur : Raquel inconnue Token"

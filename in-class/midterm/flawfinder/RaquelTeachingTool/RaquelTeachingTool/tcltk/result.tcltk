@@ -1,0 +1,236 @@
+#============================================================================
+#  result.tcltk
+#
+#  Displaying the results in the result frame
+#
+#  University of Northumbria
+#  Andreas Pfiz May 1997.
+#
+#  The result_SendString procedure revised by S.Kuschel June 1997.
+#  File output bug at the end of the text widget fixed by S.Kuschel June 1997.
+#
+#  Header reorganised by Mesel Tesfaiesus, Nov. 2001
+#=============================================================================
+
+# This procedure allows a string to be inserted in the result frame by parameter
+# "string" contains the string to be inserted at the end of the result list
+# After inserting the frame is scrolled, if neccessary, to show the insertion
+
+proc result_SendString {string} {
+   global result
+
+   $result configure -state normal
+   $result insert end "\n"	;# changed by S.Kuschel
+   $result insert end "\n"	;# changed by S.Kuschel
+   $result insert end $string
+   $result see insert
+   $result configure -state disabled
+}
+
+# This procedure allows the contents of an ASCII file to be inserted in the 
+# result frame. The name and path of the file is given by the "file" variable
+# After inserting the contents of the file, the
+# window is scrolled, if necessary, to show the inserted text.
+
+proc result_ReadResult {string} {
+   global result
+
+    
+   $result configure -state normal
+   $result insert end "\n"
+   $result insert end "After being executed by the \"Execute\"-Command: \n"
+   $result insert end "(command remains unchanged for Test Purposes)\n"
+   $result insert end $string
+   $result see insert
+   $result configure -state disabled
+
+	
+
+#   if [catch {open $file r} cfileid] {} else {
+#       $result configure -state normal 
+#       while {![eof $cfileid]} {
+#          $result insert end [read $cfileid]
+#       }
+#       $result see insert
+#       $result configure -state disabled
+#       close $cfileid
+#       } 
+}
+
+# This procedure creates the result window in the given frame 'frame'. 
+# the height and width of the frame is given by the parameters 'height'
+# and 'width'
+
+proc result_initframe {frame height width} {
+   global result
+
+# creating a 'disabled' textwidet, with a horizontal and a vertical scrollbar.
+
+   set result [text $frame.result  -exportselection 0 -wrap none \
+      -yscrollcommand [list $frame.yscroll set] -selectborderwidth 0 \
+      -xscrollcommand [list $frame.xscroll set] -state disabled \
+      -font fixed]
+    scrollbar $frame.yscroll -command [list $frame.result yview]
+    scrollbar $frame.xscroll -orient horizontal \
+        -command [list $frame.result xview]
+    pack $frame.yscroll -side right -fill y
+    pack $frame.xscroll -side bottom -fill x
+    $result tag configure sel -background grey85 -foreground black 
+    pack $result -side left -fill both
+}
+
+# This procedure pops up a fileselection dialog in which the user can select
+# a file, to which the content of the result window is saved to. The pathname
+# is stored in the global variable 'result_pathname' and the menu entry
+# "Results/Save" is enabled.
+ 
+proc result_Saveto {} {
+    global result result_pathname
+
+    #Change the directory based on what function is being called
+	set dir [pwd]
+	append dir "/Saves/Results/"
+	catch {cd $dir}
+	#Might not be in Raquel root, go back two levels
+	cd ..
+	cd ..
+	set dir [pwd]
+	set root [pwd]
+	append dir "/Saves/Results/"
+	catch {cd $dir}
+
+    set result_pathname [fileselect "Save Results to File..."]
+    if {$result_pathname !=""} {result_SaveFile $result_pathname}
+    .io.iomenu entryconfigure 8 -state normal
+	
+	#Put the dir back to the exe dir. If not causes issues with the results sink
+	catch {cd $root}
+}
+
+# This procedure saves the current content of the result frame to the file
+# specified in the global variable 'result_pathname'
+ 
+proc result_Save {} {
+    global result_pathname
+    
+    if {$result_pathname != ""} {result_SaveFile $result_pathname}
+}
+
+# This procedure saves the current content of the result frame to the file
+# specified by the parameter 'filename'
+   
+proc result_SaveFile {filename} {
+    global result
+
+    if { $filename != ""} {
+        set cfileid [open $filename w 0600]   
+        puts -nonewline $cfileid [$result get 1.0 end]
+        close $cfileid
+    }
+}    
+
+proc result_Clear {} {
+    global result
+
+    $result configure -state normal 
+    $result delete 1.0 end
+    $result configure -state disabled
+}
+
+# This procedure allows the user to select a file, which is inserted at the
+# current cursor-position.
+
+proc result_Insert {} {
+
+	#Change the directory based on what function is being called
+	set dir [pwd]
+	append dir "/Saves/Results/"
+	catch {cd $dir}
+	#Might not be in Raquel root, go back two levels
+	cd ..
+	cd ..
+	set dir [pwd]
+	set root [pwd]
+	append dir "/Saves/Results/"
+	catch {cd $dir}
+
+   	set filename [fileselect "Insert from File..."]
+   	if {$filename !=""} {result_InsertFile $filename}
+
+	#Put the dir back to the exe dir. If not causes issues with the results sink
+	catch {cd $root}
+}
+
+# Inserts a given file on the current user-position.
+
+proc result_InsertFile {filename} {
+  global result
+
+   if [catch {open $filename r} cfileid] {
+      tk_dialog .ferror " " "Specified file not found !" warning 0 Ok
+   } else {
+		$result configure -state normal
+       while {![eof $cfileid]} {
+         $result insert insert [read $cfileid]
+       }
+       close $cfileid
+		$result configure -state disabled
+   }
+}
+# This procedure allows the user to load a file. A fileselect-Dialog pops up
+# where the user can select a file.
+
+proc result_Load {} {
+	
+	#Change the directory based on what function is being called
+	set dir [pwd]
+	append dir "/Saves/Results/"
+	catch {cd $dir}
+	#Might not be in Raquel root, go back two levels
+	cd ..
+	cd ..
+	set dir [pwd]
+	set root [pwd]
+	append dir "/Saves/Results/"
+	catch {cd $dir}
+
+    set filename [fileselect "Clear & Insert from File..."]
+    if {$filename !=""} {
+        result_LoadFile $filename
+    }
+	catch {cd $root}
+}
+
+# This procedure loads a given with file into the text-Editor
+
+proc result_LoadFile {filename} {
+   global result
+	
+	#Change the directory based on what function is being called
+	set dir [pwd]
+	append dir "/Saves/Results/"
+	catch {cd $dir}
+	#Might not be in Raquel root, go back two levels
+	cd ..
+	cd ..
+	set dir [pwd]
+	set root [pwd]
+	append dir "/Saves/Results/"
+	catch {cd $dir}
+
+   if [catch {open $filename r} cfileid] {
+      tk_dialog .ferror " " "Specified file not found !" warning 0 Ok
+   } else {
+		
+       result_Clear
+		$result configure -state normal
+       while {![eof $cfileid]} {
+          $result insert end [read $cfileid]
+       }
+       close $cfileid
+		$result configure -state disabled
+   }
+
+	#Put the dir back to the exe dir. If not causes issues with the results sink
+	catch {cd $root}
+}

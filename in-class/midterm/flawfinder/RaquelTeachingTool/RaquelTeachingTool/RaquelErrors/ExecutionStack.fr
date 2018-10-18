@@ -1,0 +1,1 @@
+"Pile d'exécution : Incapable d'exécuter Stack"

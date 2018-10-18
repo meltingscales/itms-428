@@ -1,0 +1,93 @@
+                                 CHANGES.GUI File
+                                 ================
+
+
+
+
+v0.1.36 -- 5/1/2017
+================================================
+Prototype version number changed :
+               introduced an initial '0' to become the major version number, to indicate that the software is a prototype,
+                 (although could now be considered a 'beta' version ?) implemented by a changed version number in 'configure.ac';
+               incremented the patch number to reflect updated menus provided in GUI.
+
+v1.35 -- 5/1/2017
+================================================
+GUI 'Menu'Files : updated all 4 assignment menus to reflect the full set of assignments (currently planned for RAQUEL);
+                  updated 'operator' menu by adding 'Meta' operator (currently planned for RAQUEL).
+
+v1.35 -- 29/12/2016
+================================================
+Compilation *  to fix compilation problem on Ubuntu :
+                 put softlink 'libtcl.so' in the RaquelGUI distribution to point to runtime Tcl library in '/usr/local/lib';
+                 put softlink 'libtk.so' in the RaquelGUI distribution to point to runtime Tk library in '/usr/local/lib'.
+
+v1.35 -- 27/12/2016
+================================================
+GUI 'I/O'Files : added 'DemoDatabase' to'Saves/Results';
+                 deleted all statements in 'Saves/Statements';
+                 added 10 new statements (full range of examples) to 'Saves/Statements'.
+
+v1.35 -- 27/12/2016
+================================================
+* Autotools : removed old versions of 'depcomp', install-sh', 'missing', 'mkinstalldirs';
+              added new versions of 'depcomp', install-sh', 'missing', 'mkinstalldirs'; added 'compile';
+              deleted 'Makefile.cvs' (CVS not being used).
+
+v1.35 -- 26/10/2016
+================================================
+* Autotools : renamed 'configure.in' to 'configure.ac' and updated contents.
+
+v1.35 -- 01/12/2009
+================================================
+* Reverted Tcl/Tk to version 8.4.19 for added compatability.
+
+v1.34 -- 28/11/2009
+================================================
+* Changed the configure script to cope with Red Hat's way of installing TclTk.
+
+v1.33 -- 15/11/2009
+================================================
+Tcl/Tk code changes:
+* Removed the 'Print' option.
+* Changed the error message when the system was unable to open a file.
+* Reordered the list of Joins in the operator menu.
+
+v1.32 -- 10/11/2009
+================================================
+Tcl/Tk code changes:
+* Implemented 'Insert From File' and 'Clear & Insert From File' for the Results pane.
+
+v1.31 -- 8/11/2009
+================================================
+Tcl/Tk code changes:
+* Changed the name of 'Set Maximum Attribute Width' to 'Set Maximum Attribute Display Width'.
+* Fixed a bug in the 'Save' command leaving the system in the wrong working directory.
+* Disabled the 'French' language option from the menus as this service was non-functional.
+* Added extra options for 'I/O' --> 'Results' for consistency with 'Statements'.
+* Removed confirmation window after setting the attribute width.
+* Added a 'Clear' function for the results pane to the 'I/O' menu.
+
+v1.3 -- 3/11/2009
+================================================
+Installation changes:
+* Tcl/Tk development files packaged in with the Teaching Tool code to resolve previous dependency issues.
+* Altered 'configure' file to look for the Tcl/Tk library files in order to compile on most versions of Linux.
+
+Tcl/Tk code changes:
+* Auto sizing attribute widths in the results panel.
+* Max attribute width set in the result panel (under 'Options').
+* Resize of the main window to occupy 100% of the width of the screen.
+* Resize of the editor and error panels to allow more room to input RAQUEL statements.
+* Renamed "Projection" to "Project" and "Restriction" to "Restrict" in the operator list.
+* Alter the name of the Joins in the operator list to fit better when a scroll bar is present (in widescreen monitors).
+* All of the 'Save' and 'Load' commands now point to relevant specific directories.
+* Shortcut keys added to the editor :
+	* Ctrl + x : cut
+	* Ctrl + c : copy
+	* Ctrl + v : paste
+	* Ctrl + return : execute
+
+v1.2 -- 1/8/2009
+================================================
+Prototype completed.

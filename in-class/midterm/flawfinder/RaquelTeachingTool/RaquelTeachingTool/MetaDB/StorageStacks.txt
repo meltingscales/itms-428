@@ -1,0 +1,2 @@
+Stack1		tabdelimitedstack	8
+Stack3		stxstack	8

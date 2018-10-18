@@ -1,0 +1,557 @@
+#===============================================================================
+#  editor.tcltk
+#
+#  University of Northumbria
+#  Andreas Pfiz  / changed by Sebastian Kuschel
+#  to call the C++ Raquel executor
+#  1. March 1997
+#  Version 1
+#  reorganisation of the header by Mesel Tesfaiesus, Nov. 2001
+#
+#  Modified by Guillaume Renard (April 2006):
+#    > the execute procedure was redesigned to pass statements to the C
+#      programme. 
+#===============================================================================
+
+# Load the filerequest-Dialog
+source ${TCLTK_DIR}fselect.tcl
+
+# This procedure is called by pressing the <Execute> button in the menubar
+proc execute {} {
+	global lang
+	
+# set the mouse cursor to a watch, update the screen and disable interaction
+# with the menus while executing.
+
+   . config -cursor watch;
+   update idletasks
+   grab set .results
+
+# Modified by G. Renard:
+# Create a list of commands and do for each command the following:
+# 1.   send the command to the "exec" command to execute it and get its
+#      errors.
+# 2.a) if errors occured, send them to the error frame
+# 2.b) otherwise send a succes string to the error frame, get the
+#      results from their execution ("exec_results") and send them
+#      to the result window
+   error_Clear
+   set commandlist [edit_execute]
+   foreach command $commandlist {
+       # Executes the statement
+       set cmd_errors [exec $command] 
+       # If errors occured, then display them, else display results
+       if {[string length $cmd_errors]>0} {
+            error_SendString $command $cmd_errors
+       } else {
+            if {$lang == "fr"} {
+              error_SendString $command "Execution terminee."
+	        } else {
+	          error_SendString $command "Execution completed."
+	        }
+            set cmd_results [exec_results]
+            result_SendString $cmd_results
+       }
+       check_titlechange $command
+       update idletasks
+   }
+
+# allow interaction again and the set the cursor back to an arrow.
+   grab release .results
+   . config -cursor top_left_arrow;          # set the mousecursor to an
+}
+
+# This procedure checks for Database-commands and sets the window title
+# according to the Database which is opened, created or removed. To avoid
+# problems with capital letters, the string is converted to uppercase before
+# searching for the command.
+
+proc check_titlechange {command} {
+
+    set tcommand [string tolower $command]
+    if [string match "*<==*create*database*" $tcommand] {
+      set build [string range $command 0 [expr [string first "<==" $command]-1]]
+      set title "R A Q U E L   ---   Database '"
+      append title [string trim $build]
+      append title "'"
+      wm title . $title
+    }
+    if [string match "*<--*open*" $tcommand] {
+      set build [string range $command [expr [string first "pen" $command]+3] \
+                 [string length $command]]
+
+      set title "R A Q U E L   ---   Database '"
+      append title [string trim $build]
+      append title "'"
+      wm title . $title
+    }
+    if [string match "*<--*close*" $tcommand] {wm title . "R A Q U E L"}
+    if [string match "*<--*remove*" $tcommand] {wm title . "R A Q U E L"}
+}
+
+# This procedure is called by the procedure 'execute'
+# It spans two different tags, executed and tblack, over the
+# corresponding areas of the text-widget. It also calls build_list. This
+# procedure returns the list.
+
+proc edit_execute {} {
+    global grey_end grey_begin black_end black_begin txt
+
+    $txt tag remove tgrey 1.0 end;       # removing the two tags from the text
+    $txt tag remove tblack 1.0 end
+    $txt tag add tgrey $grey_begin $black_end; # attaching the grey tag to the
+                                               # text not yet executed
+
+    # removing the last line if it contains nothing
+    if {[$txt get "end -1 lines linestart" "end -1 lines lineend" ] =="" } {
+        $txt delete "end -1 lines linestart" end }
+    set result [build_list $txt];
+    set grey_end [$txt index "end -1 chars"]; # set up the new values for the
+    set black_begin $grey_end;                # 4 variables
+    set black_end end
+    $txt insert end "\n" tblack;              # insert a carriage return as
+    $txt tag add tblack $grey_end end;        # the last character
+    $txt mark set insert end;                 # placing the cursor at the end
+    $txt see insert;                          # of the text and scroll there
+    enable_buttons;                           # enables the buttons if the
+                                              # cursor was in the grey area
+    return $result
+}
+
+# This proceure will be called by pressing the Animate Button.
+proc animate {} {}
+
+# This procedure converts the portion of the text which is not yet executed
+# into a list of strings, in which every item of the list is a line of raquel-
+# statements. It returns the list.
+
+proc build_list {txt} {
+    global black_begin black_end
+
+    set result {}
+    set firstline [expr int([$txt index $black_begin])+1]
+    set lastline [expr int([$txt index $black_end])]
+
+     for {set line $firstline} {$line<$lastline} { incr line} {
+         set build [$txt get $line.0 $line.end]
+         if {[string length $build]>0} {
+            append build "\n"
+            lappend result $build
+         }
+     }
+     return $result
+}
+
+# This procedure allows the user to load a file. A fileselect-Dialog pops up
+# where the user can select a file.
+
+proc edit_Load {} {
+    global grey_begin grey_end black_begin black_end
+	
+	#Change the directory based on what function is being called
+	set dir [pwd]
+	append dir "/Saves/Statements/"
+	catch {cd $dir}
+	#Might not be in Raquel root, go back two levels
+	cd ..
+	cd ..
+	set dir [pwd]
+	set root [pwd]
+	append dir "/Saves/Statements/"
+	catch {cd $dir}
+
+    set filename [fileselect "Clear & Insert from File..."]
+    if {$filename !=""} {
+        edit_LoadFile $filename
+        set grey_end 1.0
+        set grey_begin 1.0
+        set black_begin 1.0
+        set black_end end
+    }
+	catch {cd $root}
+}
+
+# This procedure loads a given with file into the text-Editor
+
+proc edit_LoadFile {filename} {
+   global txt
+	
+	#Change the directory based on what function is being called
+	set dir [pwd]
+	append dir "/Saves/Statements/"
+	catch {cd $dir}
+	#Might not be in Raquel root, go back two levels
+	cd ..
+	cd ..
+	set dir [pwd]
+	set root [pwd]
+	append dir "/Saves/Statements/"
+	catch {cd $dir}
+
+   if [catch {open $filename r} cfileid] {
+      tk_dialog .ferror " " "Specified file not found !" warning 0 Ok
+   } else {
+       edit_ClearAll
+       while {![eof $cfileid]} {
+          $txt insert end [read $cfileid]
+       }
+       close $cfileid
+   }
+
+	#Put the dir back to the exe dir. If not causes issues with the results sink
+	catch {cd $root}
+}
+proc edit_ClearAll {} {
+	global txt
+	$txt delete 1.0 end
+	#insert a space and a newline in the first line and attach the tags to it
+	# by executing.
+   $txt insert 1.0 " \n"
+   edit_execute
+}
+# This procedure let the user specify a name of a file, to which the content
+# of the edit-window is to be saved. If there is selected text in the editor,
+# the user is asked if he wants the whole text or only the selected area
+# to be saved in the file.
+
+proc edit_Saveto {} {
+    global txt pathname
+	
+	#Change the directory based on what function is being called
+	set dir [pwd]
+	append dir "/Saves/Statements/"
+	catch {cd $dir}
+	#Might not be in Raquel root, go back two levels
+	cd ..
+	cd ..
+	set dir [pwd]
+	set root [pwd]
+	append dir "/Saves/Statements/"
+	catch {cd $dir}
+
+    set range [$txt tag ranges sel]
+    if { [lindex $range 0]==""} {
+        set pathname [fileselect "Save to File..."]
+        edit_SaveFile $pathname
+    } else {
+        after idle {.frequest.msg configure -wraplength 4i}
+        set selection [tk_dialog .frequest " " {You have selected only a portion of the
+text. Should only the selection or the
+whole text be saved to the file ?} question 0 Selection "Whole Text" Cancel]
+       if { $selection == 0} { edit_SaveSelected [fileselect ""] }
+       if { $selection == 1} { edit_SaveFile [fileselect ""] }
+    }
+    .io.iomenu entryconfigure 3 -state normal
+
+	#Put the dir back to the exe dir. If not causes issues with the results sink
+	catch {cd $root}
+}
+
+# Saves the whole content of the edit-window into a given file.
+
+proc edit_Save {} {
+    global pathname
+
+    if {$pathname != ""} {edit_SaveFile $pathname}
+}
+
+# Saves the whole content of the edit-window into a given file.
+
+proc edit_SaveFile {filename} {
+    global txt
+
+    if { $filename != ""} {
+        set cfileid [open $filename w+ 0666]
+        puts -nonewline $cfileid [$txt get 1.0 end]
+        close $cfileid
+    }
+}
+
+# Saves only the selected area of the edit-window into a given file.
+
+proc edit_SaveSelected {filename} {
+    global txt
+
+    if { $filename != ""} {
+       set cfileid [open $filename w 0600]
+       set range [$txt tag ranges sel]
+       puts -nonewline $cfileid [$txt get [lindex $range 0] [lindex $range 1] ]
+       close $cfileid
+    }
+}
+
+# This procedure allows the user to select a file, which is inserted at the
+# current cursor-position.
+
+proc edit_Insert {} {
+
+	#Change the directory based on what function is being called
+	set dir [pwd]
+	append dir "/Saves/Statements/"
+	catch {cd $dir}
+	#Might not be in Raquel root, go back two levels
+	cd ..
+	cd ..
+	set dir [pwd]
+	set root [pwd]
+	append dir "/Saves/Statements/"
+	catch {cd $dir}
+
+   	set filename [fileselect "Insert from File..."]
+   	if {$filename !=""} {edit_InsertFile $filename}
+
+	#Put the dir back to the exe dir. If not causes issues with the results sink
+	catch {cd $root}
+}
+
+# Inserts a given file on the current user-position.
+
+proc edit_InsertFile {filename} {
+  global txt
+
+   if [catch {open $filename r} cfileid] {
+      tk_dialog .ferror " " "Unable to open file !" warning 0 Ok
+   } else {
+       while {![eof $cfileid]} {
+         $txt insert insert [read $cfileid]
+       }
+       close $cfileid
+   }
+}
+
+# This procedure allows other modules of RaquelIO to send text-strings to
+# the editor, which are inserted at the current cursor-position.
+
+proc edit_SendString {string move} {
+   global txt grey_end
+
+   if { [$txt compare $grey_end < insert ]} {
+       for {set i 0} {$i < [string length $string]} {incr i} {
+          set character [string index $string $i]
+          if {$character=="\\"} {
+             $txt insert insert "\n"
+             incr i
+          } else {
+             $txt insert insert $character
+          }
+      }
+      focus $txt
+      if {$move !=0 } {$txt mark set insert "insert + $move chars"}
+      $txt see insert
+   }
+}
+
+# This procedure cuts selected text in the editor and copies it into the
+# global variable 'copybuffer'
+       	
+proc cut {} {
+    global copybuffer txt
+
+    set range [$txt tag ranges sel]
+    if { [lindex $range 0] !="" } {
+        set copybuffer [$txt get [lindex $range 0]\
+           [lindex $range 1]]
+        $txt delete [lindex $range 0] [lindex $range 1]
+        if {[$txt get "insert linestart" "insert lineend"]==""} {
+            $txt delete insert
+        }
+    }
+}
+
+# This procedure copies selected text in the editor into the global variable
+# 'copybuffer'
+
+proc copy {} {
+    global copybuffer txt
+
+    set range [$txt tag ranges sel]
+    if { [lindex $range 0] !=""} {
+        set copybuffer [$txt get [lindex $range 0]\
+           [lindex $range 1]]
+    }
+}
+
+# This procedure inserts the content of the global variable 'copybuffer'
+# on the current cursor-position
+
+proc paste {} {
+    global copybuffer txt
+    $txt insert insert $copybuffer
+    $txt see insert
+}
+
+# This procedure is binded to all keyevents expect of cursor-movements.
+# If the cursor is in the greyed area, the insertion of the typed key is
+# prevented by overriding the the bindings for this key. If the cursor
+# isn't in the greyed area, the character is inserted at the cursor position.
+
+proc anykey {} {
+    global txt grey_end grey_begin
+   if { [$txt compare $grey_end > "insert -1 chars"]} {
+      return -code break
+   }
+}
+
+# This procedure is binded to the cursor-up Key on the keyboard an watches
+# if the cursor is going to enter the greyed area and disables the corres-
+# sponding menue-commands like cut/copy/paste/insert File if so.
+
+proc checkgrey_up {} {
+   global txt grey_end
+
+   if { [$txt compare $grey_end > "insert -1 lines -1 chars"]} {disable_buttons}
+}
+
+# This procedure is binded to the cursor-Down Key on the keyboard an watches
+# if the cursor is going to leave the greyed area and enables the corresponding
+# menue-commands.
+
+proc checkgrey_down {} {
+   global txt grey_end
+
+   if { [$txt compare $grey_end < "insert +1 lines"] } {enable_buttons}
+}
+
+# This procedure is binded to the cursor-Right Key on the keyboard an watches
+# if the cursor is going to leave the greyed area and enables the corresponding
+# menue-commands.
+
+proc checkgrey_right {} {
+   global txt grey_end
+
+   if { [$txt compare $grey_end < "insert +1 chars"]} {enable_buttons}
+}
+
+# This procedure is binded to the cursor-Left Key on the keyboard an watches
+# if the cursor is going to leave the greyed area and disables the corresponding
+# menue-commands.
+
+proc checkgrey_left {} {
+   global txt grey_end
+
+   if { [$txt compare $grey_end > "insert -2 chars"]} {disable_buttons}
+}
+
+# This procedure is binded to the backspace key and tests, if the cursor
+# is outside the grey area.
+
+proc check_backspace {} {
+   global txt grey_end
+
+   if { [$txt compare $grey_end > "insert -2 chars"]} {return -code break}
+}
+
+# This procedure is binded to the delete key and checks if the cursor is
+# outside the grey area.
+
+proc check_delete {} {
+   global txt grey_end black_end
+
+   if { [$txt compare $grey_end  == "[$txt index $black_end] -2 chars"] } {
+      return -code break
+   }
+   if { [$txt compare $grey_end  == "insert"] } {
+      return -code break
+   }
+   if { [$txt compare insert == "end -1 chars"] } {
+      return -code break
+  }
+}
+
+# This procedure is binded to the page-up and page-Down buttons and prevents
+# any firther processing of these keys, because it isn't predictable in which
+# area the cursor is moved to.
+
+proc kill_key {} {return -code break}
+
+# This procedure disables the <Cut> and <Paste> buttons as well as the State-
+# ments/Insert from file... command
+
+proc disable_buttons {} {
+
+   .cut config -state disabled
+   .paste config -state disabled
+   .io.iomenu entryconfigure 2 -state disabled
+}
+
+# This procedure enables the <Cut> and <Paste> buttons as well as the State-
+# ments/Insert from file... command
+
+proc enable_buttons {} {
+
+   .cut config -state normal
+   .paste config -state normal
+   .io.iomenu entryconfigure 2 -state normal
+}
+
+# This procedure sets up the editor in the given frame 'we'
+# The frame has to be set up with the pack propagate command.
+
+proc edit_initframe {we} {
+   global txt copybuffer black_end black_begin grey_end grey_begin
+
+#creating a text widget and a scrollbar
+   set txt [text $we.text  -exportselection 0 -wrap word \
+     -yscrollcommand [list $we.yscroll set] ]
+   scrollbar $we.yscroll -orient vertical -command [list $we.text yview]
+
+   pack $we.yscroll -side right -fill y
+   pack $txt -side left -fill both
+
+# Initialise the global variables
+   set copybuffer ""
+   set grey_end 1.0
+   set grey_begin 1.0
+   set black_begin 1.0
+   set black_end end
+
+# set up the different tags for the greyed and the black text.
+   $txt tag configure tgrey -foreground grey60 -lmargin2 14
+   $txt tag configure tblack -lmargin2 14
+   $txt tag add tblack 1.0 end
+# bind the routines to the tag to enable/diasble the <cut> and <paste> buttons
+# if the user clicks in the text.
+   $txt tag bind tgrey <Button> disable_buttons
+   $txt tag bind tblack <Button> enable_buttons
+
+# bind the different procedures to the cursor movement keys to check if the
+# cursor goes in or out the grey text.
+   bind $txt <Up> checkgrey_up
+   bind $txt <Down> checkgrey_down
+   bind $txt <Left> checkgrey_left
+   bind $txt <Right> checkgrey_right
+   bind $txt <Prior>  kill_key
+   bind $txt <Next> kill_key
+   bind $txt <BackSpace> check_backspace
+   bind $txt <Delete> check_delete
+   bind $txt <KeyPress> {
+   
+        anykey
+        #Shortcut keys added for demo
+        set keyPressed %K
+        if { $keyPressed=="F1" } {
+            $txt insert insert "s <--Retrieve Customers"
+            $txt see insert
+        } 
+		#elseif { $keyPressed=="F2" } {
+        #    $txt insert insert "s <--Retrieve Parts"
+        #    $txt see insert
+        #} elseif { $keyPressed=="F3" } {
+        #    $txt insert insert "s <--Retrieve Suppliers"
+        #    $txt see insert
+        #}
+   }   bind $txt <Control-Key-Return> {
+        #Execute the statement and cancel the effect of Return as execute adds a new line
+        execute
+        return -code break
+   }
+   bind $txt <Control-Key-c> copy
+   bind $txt <Control-Key-x> cut
+   bind $txt <Control-Key-v> paste
+   
+#insert a space and a newline in the first line and attach the tags to it
+# by executing.
+   $txt insert 1.0 " \n"
+   edit_execute
+}
+

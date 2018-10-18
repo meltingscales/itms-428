@@ -1,0 +1,280 @@
+#==========================================================================
+#  topwindow.tcltk
+#
+#  Create the main screen for RaquelIO.
+#
+#  David Livingstone
+#  1 May 1997
+#  Version 1
+#  some small changes by S.Kuschel
+#  reorganisation of the header by Mesel Tesfaiesus, Nov. 2001
+#
+#  Modified by Guillaume Renard (May 2006):
+#    > the animate button was removed
+#    > the animate frame was replaced by the error frame 
+#    > the language menu option was added
+#==========================================================================
+# The top-level window has three parts (columns) :
+#       1.  A left section to hold menu options that will often be left 
+#           open to view.
+#       2.  A centre section to hold the RAQUEL edit frame (above) and
+#           the error frame (below).
+#       3.  A right section to hold the results of executing RAQUEL
+#           statements.
+# A menubar along the top is split into three parts that correspond to
+# these three sections.
+#==========================================================================
+
+# =========================================================================
+# this is the initalisation part added by Sebastian Kuschel
+# normally all these parts should be in a procedure so that the procedure 
+# could be called and the initialisation could be organised better
+
+set colWidth 20
+
+#set workingDirectory [GetWorkDir]
+set workingDirectory "."
+cd $workingDirectory
+
+# end of the changed part
+# =========================================================================
+
+# Set the size of the sidemenus to a fixed value
+
+set xleft 335
+
+# Calculate the proportional widths of the remaining two window sections.
+
+set xcentre [expr (($xdim-$xleft)/2)+($xleft/2)]
+set xright [expr ($xdim-$xleft)/2]
+
+# Calculate the width of the middle section of the menuframe
+
+set mcentre [expr $xcentre-($xleft/2)]
+
+# Calculate the proportional height of the RAQUEL edit frame.
+# (N.B. The height of the menubar is determined by the size of the buttons
+# in it.  The height of the error frame is what is left after the
+# menubar and edit frame heights have been determined and removed from
+# the top window).
+set yedit [expr (0.8*$ydim)/1]
+
+# Set the width of narrow and wide buttons (in characters).
+set xnarrow 4
+set xwide 7
+
+# Set the offset (in millimetres) of the buttons in the left and right
+# sections from the centre.
+set xleftoffset 10
+set xrightoffset 20
+
+#==========================================================================
+
+# Create and pack the widgets that appear on the screen.
+
+# 1. The menubar
+
+# Create a menubar for the top of the screen.
+frame .menubar -borderwidth 2 -relief ridge
+
+# Create 3 separate sections (frames) for the menubar, to hold :
+#       1. 'File' and 'Options' menus;
+#       2. the RAQUEL edit commands;
+#       3. 'Execute' command.
+frame .menubar.left
+frame .menubar.centre
+frame .menubar.right
+
+# Create the command buttons to go in the menubar.
+
+menubutton .io -text "I/O" -width $xwide -relief raised -menu .io.iomenu
+menubutton .options -text Options -width $xwide -relief raised -anchor w -menu .options.optmenu
+button .cut -text Cut -width $xnarrow -command cut
+button .copy -text Copy -width $xnarrow -command copy
+button .paste -text Paste -width $xnarrow -command paste
+button .execute -text Execute -width $xwide -command execute
+
+# Create the IO-Menu
+set fm [menu .io.iomenu -tearoff 0]
+$fm add command -label "        STATEMENTS" -state disabled
+$fm add command -label "Clear" -command edit_ClearAll
+$fm add command -label "Clear & Insert from File... " -command edit_Load
+$fm add command -label "Insert from File..." -command edit_Insert
+$fm add command -label "Save to File..." -command edit_Saveto
+#$fm add command -label "Print" 
+$fm add separator
+$fm add command -label "           RESULTS" -state disabled
+$fm add command -label "Clear" -command result_Clear
+$fm add command -label "Clear & Insert from File... " -command result_Load
+$fm add command -label "Insert from File..." -command result_Insert
+$fm add command -label "Save to File..." -command result_Saveto
+#$fm add command -label "Print"
+$fm add separator
+$fm add command -label "Exit" -command {destroy .}
+
+# Create the Options Menu
+set om [menu .options.optmenu -tearoff 0]
+$om add cascade -label "Language for error messages" -menu $om.language
+$om add command -label "Set Maximum Attribute Display Width"  -command { ColWidthPopup }
+set om2 [menu $om.language -tearoff 0]
+$om2 add radio -label English -variable lang -value en -command {select_lang $lang}
+$om2 add radio -label French -state disabled -variable lang -value fr -command {select_lang $lang}
+
+# Add the size configuration information for the menubar sub-sections,
+# now that the button heights can be found.
+set ybutton [winfo reqheight .options]
+.menubar.left configure -height $ybutton -width $xleft
+.menubar.centre configure -height $ybutton -width $mcentre
+.menubar.right configure -width $xright -height $ybutton
+
+# Set  the sizes of the padding frames for padding out the left and right
+# sections of the menubar.
+frame .lpadding -width  $xleftoffset
+frame .rpadding -width  $xrightoffset
+
+# Lay out the buttons in the menubar.
+pack .options .io .lpadding -in .menubar.left \
+ -expand true -side right 
+pack .cut .copy .paste -in .menubar.centre  -expand true -side left  
+pack .execute .rpadding -in .menubar.right \
+ -expand true -side left
+
+# Lay out the menu bar.
+pack propagate .menubar.left false
+pack propagate .menubar.centre false
+pack propagate .menubar.right false
+pack .menubar.left .menubar.centre .menubar.right -side left
+pack .menubar -side top
+
+#=================================
+
+# 2. The main part of the window.
+
+# Calculate the height of the main part of the window after allowing for 
+# the menubar at the top.
+set ymain [expr $ydim - [winfo height .menubar] ]
+
+# Create a frame for the left section to hold RAQUEL syntax and Data 
+# Dictionary menus.
+frame .sidemenus -height $ymain -width [expr $xleft/2]
+
+# Create a frame to hold the centre section of frames on the display.
+frame .centre -height $ymain -width $xcentre
+
+# Split the centre frame in to identical sections
+frame .centre.top -width $xcentre -height [expr (0.8*$ymain)/1] 
+frame .centre.bottom -width $xcentre -height [expr (0.2*$ymain)/1] 
+
+# Split each centre frame in a section for the submenus for RAQUEL syntax
+# and the Data dictionary on the left hand side.
+frame .centre.top.menu -width [expr $xleft/2]  -height [expr (0.8*$ydim)/1]
+frame .centre.bottom.menu -width [expr $xleft/2]
+
+# Use the reamining space of the two centre frames for:
+#       1. a frame to hold the RAQUEL display/edit area;
+#       2. a frame to display the errors of executing RAQUEL expressions.
+frame .centre.top.edit -borderwidth 2 -relief ridge
+frame .centre.bottom.errors \
+      -width [expr $xcentre-($xleft/2)] -borderwidth 2 -relief ridge \
+      -background grey70
+
+# Create a frame for the right section to display the results of executing
+# RAQUEL expressions.
+frame .results -height $ymain -width $xright -borderwidth 2 -relief ridge \
+      -background grey70
+	  
+# Turn off propagation of the following frames:
+pack propagate .sidemenus false
+pack propagate .results false
+pack propagate .centre false
+pack propagate .centre.top false
+pack propagate .centre.bottom false
+pack propagate .centre.top.menu false
+pack propagate .centre.bottom.menu false
+
+# Packing all the frames
+pack .sidemenus -side left
+pack .centre -side left
+pack .centre.top .centre.bottom
+pack .centre.top.menu -side left 
+pack .centre.bottom.menu -side left
+pack .centre.top.edit -side right -fill both -expand true
+pack .centre.bottom.errors -side right -fill both -expand true
+pack .results -side right -fill both
+
+# set up the result frame
+result_initframe .results $ymain $xright
+
+# set up the edit frame
+edit_initframe .centre.top.edit 
+
+# set up the error frame
+error_initframe .centre.bottom.errors
+
+#set up the sidemenus
+menu_initframe .sidemenus .centre.top.menu $ymain $xleft
+
+#A popup box to allow the user to change the column width
+proc ColWidthPopup { } {
+	   global seltxt
+	toplevel .maxAttrWidthPopup -width 180 -height 65 -padx 20 -pady 20
+	
+	grab .maxAttrWidthPopup
+	wm title .maxAttrWidthPopup "Set Maximum Attribute Display Width"
+
+	label .maxAttrWidthPopup.newSizeLabel -text "New Size : "
+	place .maxAttrWidthPopup.newSizeLabel -in .maxAttrWidthPopup 
+	#-x 2  -y 2
+    pack .maxAttrWidthPopup.newSizeLabel -side left
+    
+   
+	entry .maxAttrWidthPopup.newSizeIn -width 3 -relief sunken -textvariable seltxt
+	place .maxAttrWidthPopup.newSizeIn -in .maxAttrWidthPopup
+	# -x 72  -y 2
+	pack .maxAttrWidthPopup.newSizeIn -side left
+	
+	button .maxAttrWidthPopup.setSizeButton -text Set -command { SetAttWidth $seltxt }
+	place .maxAttrWidthPopup.setSizeButton -in .maxAttrWidthPopup
+	# -x 2 -y 30
+	pack .maxAttrWidthPopup.setSizeButton -side left
+	
+	button .maxAttrWidthPopup.cancel -text Cancel -command {destroy .maxAttrWidthPopup}
+	place .maxAttrWidthPopup.cancel -in .maxAttrWidthPopup
+	# -x 90 -y 30
+	pack .maxAttrWidthPopup.cancel -side left
+	
+	#Put focus on the entry field and position cursor at the end
+	focus .maxAttrWidthPopup.newSizeIn
+    #.maxAttrWidthPopup.newSizeIn icursor end
+    
+    #Delete the contents when closed
+    .maxAttrWidthPopup.newSizeIn delete 0 end
+
+    bind .maxAttrWidthPopup <Key> { 
+        set keyPressed %K
+        if { $keyPressed=="Return" } {
+            SetAttWidthCPP $seltxt
+        } elseif { $keyPressed=="Escape" } {
+            destroy .maxAttrWidthPopup
+        }
+    }
+}
+
+#The function which will interact with the C++ code
+proc SetAttWidthCPP {newWidth} {
+    
+    set setAttWidthOK [set_attrWidth $newWidth]
+    
+    #If the set was successful destroy the popup box
+    if {$setAttWidthOK != "0"} {
+        #tk_messageBox -message "Max Width set to: $setAttWidthOK" \
+        #        -icon info -type ok -parent .maxAttrWidthPopup
+        destroy .maxAttrWidthPopup
+    } else {
+          tk_messageBox -message "Invalid width: $newWidth" \
+                -icon error -type ok -parent .maxAttrWidthPopup
+                
+           focus .maxAttrWidthPopup.newSizeIn
+    }
+} 
+

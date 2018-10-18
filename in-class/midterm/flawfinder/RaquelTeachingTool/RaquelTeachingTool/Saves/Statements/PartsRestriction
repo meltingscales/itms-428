@@ -1,0 +1,3 @@
+s  <--Retrieve Parts  Restrict[ PartName Position[ 1 ] = 'C'  ]
+s  <--Retrieve Parts  Restrict[ PartName Length > 6 And (PType= 2)  ]
+s  <--Retrieve Parts  Restrict[ PartName Find[ 'R' ] Xor (PType = 2)  ]

@@ -1,0 +1,3 @@
+s  <--Retrieve Suppliers  Gen[[ SID = CID  ]{ CustomerName <-- 'no-one'; CID <-- 'C0'; Address <-- 'nowhere'; CreditLimit <-- 0 } Customers
+s  <--Retrieve Suppliers  Gen{ SupplierName <-- 'no-one'; SID <-- 'S0'; PType <-- -1; Location <-- 'nowhere'}[ SID = CID  ]] Customers
+s  <--Retrieve Suppliers  Gen{ SupplierName <-- 'no-one'; SID <-- 'S0'; PType <-- -1; Location <-- 'nowhere'}[[ SID = CID  ]]{ CustomerName <-- 'no-one'; CID <-- 'C0'; Address <-- 'nowhere'; CreditLimit <-- 0 } Customers

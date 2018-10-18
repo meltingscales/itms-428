@@ -1,0 +1,12 @@
+
+Close-, <==Close\n,0
+Copy-, <--Copy ,0
+Database (Create)-, <==Database,0
+Delete-, <--Delete,0
+Move-, <--Move ,0
+Open-, <==Open,0
+Remove-, <--Remove,0
+Rename-, <--Rename ,0
+Restore-, <--Restore[  ],-2
+Stack (Create)-, ==Stack[  ],-2
+Subschema (Create)-, <==Subschema,0

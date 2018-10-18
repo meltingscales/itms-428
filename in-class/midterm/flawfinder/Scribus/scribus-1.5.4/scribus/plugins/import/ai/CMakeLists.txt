@@ -1,0 +1,53 @@
+include_directories(
+	${CMAKE_SOURCE_DIR}
+	${CMAKE_SOURCE_DIR}/scribus
+	${PODOFO_INCLUDES}
+)
+
+if(HAVE_PODOFO)
+	include_directories(
+		${LIBPODOFO_INCLUDE_DIR}
+	)
+endif()
+
+set(IMPORTAI_PLUGIN_MOC_CLASSES
+	importai.h
+	importaiplugin.h
+)
+
+set(IMPORTAI_PLUGIN_SOURCES
+	importai.cpp
+	importaiplugin.cpp
+)
+
+set(SCRIBUS_IMPORTAI_PLUGIN "importai")
+
+QT5_WRAP_CPP(IMPORTAI_PLUGIN_MOC_SOURCES ${IMPORTAI_PLUGIN_MOC_CLASSES})
+
+add_library(${SCRIBUS_IMPORTAI_PLUGIN} MODULE ${IMPORTAI_PLUGIN_SOURCES} ${IMPORTAI_PLUGIN_MOC_SOURCES})
+
+if(WIN32)
+	target_link_libraries(${SCRIBUS_IMPORTAI_PLUGIN}
+		${PLUGIN_LIBRARIES}
+		${TIFF_LIBRARIES}
+		${JPEG_LIBRARIES}
+	)
+else()
+	target_link_libraries(${SCRIBUS_IMPORTAI_PLUGIN} ${PLUGIN_LIBRARIES})
+endif()
+
+if(HAVE_PODOFO)
+	target_link_libraries(${SCRIBUS_IMPORTAI_PLUGIN}
+		${LIBPODOFO_LIBRARY}
+	)
+endif()
+
+install(TARGETS ${SCRIBUS_IMPORTAI_PLUGIN}
+	LIBRARY
+	DESTINATION ${PLUGINDIR}
+	PERMISSIONS ${PLUGIN_PERMISSIONS}
+)
+
+add_dependencies(${SCRIBUS_IMPORTAI_PLUGIN} ${EXE_NAME})
+
+# set_target_properties(${SCRIBUS_FONTPREVIEW_PLUGIN} PROPERTIES VERSION "0.0.0")

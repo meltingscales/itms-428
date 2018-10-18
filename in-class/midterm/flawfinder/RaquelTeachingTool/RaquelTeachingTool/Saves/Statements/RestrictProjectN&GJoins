@@ -1,0 +1,2 @@
+s  <--Retrieve Parts  Restrict[ PType >= 2  ]  Join[ PType  ] ( Suppliers  Restrict[ Location = 'Japan'  ] )
+s  <--Retrieve Suppliers  Restrict[ PType ~= 0  ]  Project[ SupplierName, SID  ]  Gen[ SID = CID  ] Customers  Restrict[ CreditLimit > 100000  ]  Project[ CustomerName, CID  ]

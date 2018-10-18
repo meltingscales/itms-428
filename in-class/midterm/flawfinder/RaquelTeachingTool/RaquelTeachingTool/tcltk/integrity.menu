@@ -1,0 +1,8 @@
+Access Rights-, <==Access[  <--  ],-6
+Attribute-, <==Attribute[  ],-2
+Constraint (Add)-, <==Constraint[  ],-2
+Constraint (Remove)-, <==Constraint[ ~  ],-2
+Key (Add)-, <==Key[  ],-2
+Key (Remove)-, <==Key[ ~  ],-2
+
+

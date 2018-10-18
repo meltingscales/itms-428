@@ -1,0 +1,7 @@
+TABLE_NAME,COLUMN_NAME,TABLE_SCHEMA,TABLE_CATALOG,CONSTRAINT_NAME,ORDINAL_POSITION,CONSTRAINT_SCHEMA,CONSTRAINT_CATALOG,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME,REFERENCED_TABLE_SCHEMA,POSITION_IN_UNIQUE_CONSTRAINT
+accounts,id,webscantest,def,PRIMARY,1,webscantest,def,NULL,NULL,NULL,NULL
+accounts,id,webscantest,def,id,1,webscantest,def,NULL,NULL,NULL,NULL
+inventory,id,webscantest,def,id,1,webscantest,def,NULL,NULL,NULL,NULL
+orders,id,webscantest,def,PRIMARY,1,webscantest,def,NULL,NULL,NULL,NULL
+products,id,webscantest,def,id,1,webscantest,def,NULL,NULL,NULL,NULL
+

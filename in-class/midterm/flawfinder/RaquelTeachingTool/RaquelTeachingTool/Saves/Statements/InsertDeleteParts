@@ -1,0 +1,4 @@
+s   <--Retrieve Parts  <--Insert { { PartName <-- 'Monitor'; PType <-- 4 } { PartName <-- 'Keyboard'; PType <-- 5 } }
+s  <--Retrieve Parts  <--Delete { { PartName <-- 'Monitor'; PType <-- 4 } { PartName <-- 'Keyboard'; PType <-- 5 } }
+s   <--Retrieve Parts  <--Insert { { PartName <-- 'Monitor'; PType <-- 4 } { PartName <-- 'Keyboard'; PType <-- 5 } }
+s   <--Retrieve Parts  <--Delete Parts  Restrict[ PartName = 'Monitor' Or ( PartName = 'Keyboard' ) ]

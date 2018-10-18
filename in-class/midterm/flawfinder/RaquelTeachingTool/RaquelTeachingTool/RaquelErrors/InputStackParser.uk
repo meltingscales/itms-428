@@ -1,0 +1,7 @@
+"Parser Error: Unable to Create Tree"
+"Parser Error: Unbalanced Operands"
+"Parser Error: Unsuported Scalar Function"
+"Parser Error: Invalid Operator Associativity"
+"Parser Error: Empty Statement"
+"Parser Error: Empty Literal Statement"
+"Parser Error: Empty Parameter Statement"

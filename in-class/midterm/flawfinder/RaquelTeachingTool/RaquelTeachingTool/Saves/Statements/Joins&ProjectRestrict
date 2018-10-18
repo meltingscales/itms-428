@@ -1,0 +1,2 @@
+s  <--Retrieve Parts  Join[ PType  ] Suppliers  Project[ PType  ]
+s  <--Retrieve Parts  Join[ PType  ] Suppliers  Restrict[ PType >= 2  ] Project[ SupplierName, Location  ]

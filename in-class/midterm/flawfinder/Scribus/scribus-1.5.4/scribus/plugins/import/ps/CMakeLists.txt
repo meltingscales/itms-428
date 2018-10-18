@@ -1,0 +1,50 @@
+include_directories(
+	${CMAKE_SOURCE_DIR}
+	${CMAKE_SOURCE_DIR}/scribus
+	${PODOFO_INCLUDES}
+)
+
+if(HAVE_PODOFO)
+	include_directories(
+		${LIBPODOFO_INCLUDE_DIR}
+	)
+endif()
+
+set(IMPORTPS_PLUGIN_MOC_CLASSES
+	importps.h
+	importpsplugin.h
+)
+
+set(IMPORTPS_PLUGIN_SOURCES
+	importps.cpp
+	importpsplugin.cpp
+)
+
+set(SCRIBUS_IMPORTPS_PLUGIN "importps")
+
+QT5_WRAP_CPP(IMPORTPS_PLUGIN_MOC_SOURCES ${IMPORTPS_PLUGIN_MOC_CLASSES})
+
+add_library(${SCRIBUS_IMPORTPS_PLUGIN} MODULE ${IMPORTPS_PLUGIN_SOURCES} ${IMPORTPS_PLUGIN_MOC_SOURCES})
+
+target_link_libraries(${SCRIBUS_IMPORTPS_PLUGIN} ${PLUGIN_LIBRARIES})
+
+if(HAVE_PODOFO)
+	target_link_libraries(${SCRIBUS_IMPORTPS_PLUGIN}
+		${LIBPODOFO_LIBRARY}
+	)
+endif()
+
+install(TARGETS ${SCRIBUS_IMPORTPS_PLUGIN}
+	LIBRARY
+	DESTINATION ${PLUGINDIR}
+	PERMISSIONS ${PLUGIN_PERMISSIONS}
+)
+
+install(FILES 
+	import.prolog
+	DESTINATION ${LIBDIR}
+)
+
+add_dependencies(${SCRIBUS_IMPORTPS_PLUGIN} ${EXE_NAME})
+
+# set_target_properties(${SCRIBUS_FONTPREVIEW_PLUGIN} PROPERTIES VERSION "0.0.0")

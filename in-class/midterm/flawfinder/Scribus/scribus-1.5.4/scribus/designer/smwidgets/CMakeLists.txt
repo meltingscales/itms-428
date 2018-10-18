@@ -1,0 +1,208 @@
+include_directories(
+${CMAKE_SOURCE_DIR}
+${CMAKE_SOURCE_DIR}/scribus
+)
+set(SCRIBUS_SMALIGNSELECTPLUGIN_PLUGIN_MOC_CLASSES
+smalignselectplugin.h
+../../smalignselect.h
+../../alignselect.h
+../../iconmanager.h
+../../scpaths.h
+../../prefsmanager.h
+../../commonstrings.h
+../../actionmanager.h
+)
+
+set(SCRIBUS_SMALIGNSELECTPLUGIN_PLUGIN_SOURCES
+smalignselectplugin.cpp
+../../smalignselect.cpp
+../../alignselect.cpp
+../../iconmanager.cpp
+../../scpaths.cpp
+../../prefsmanager.cpp
+../../commonstrings.cpp
+../../actionmanager.cpp
+)
+
+set(SCRIBUS_SMCOLORCOMBOPLUGIN_PLUGIN_MOC_CLASSES
+smcolorcomboplugin.h
+../../smcolorcombo.h
+../../colorcombo.h
+../../colorlistbox.h
+../../commonstrings.h
+)
+
+set(SCRIBUS_SMCOLORCOMBOPLUGIN_PLUGIN_SOURCES
+smcolorcomboplugin.cpp
+../../smcolorcombo.cpp
+../../colorcombo.cpp
+../../colorlistbox.cpp
+../../commonstrings.cpp
+)
+
+set(SCRIBUS_SMFONTCOMBOHPLUGIN_PLUGIN_MOC_CLASSES
+smfontcombohplugin.h
+../../smfontcomboh.h
+../../fontcombo.h
+)
+
+set(SCRIBUS_SMFONTCOMBOHPLUGIN_PLUGIN_SOURCES
+smfontcombohplugin.cpp
+../../smfontcomboh.cpp
+../../fontcombo.cpp
+)
+
+set(SCRIBUS_SMSCCOMBOBOXPLUGIN_PLUGIN_MOC_CLASSES
+smsccomboboxplugin.h
+../../smsccombobox.h
+)
+
+set(SCRIBUS_SMSCCOMBOBOXPLUGIN_PLUGIN_SOURCES
+smsccomboboxplugin.cpp
+../../smsccombobox.cpp
+)
+
+set(SCRIBUS_SMSCRSPINBOXPLUGIN_PLUGIN_MOC_CLASSES
+smscrspinboxplugin.h
+../../ui/smscrspinbox.h
+../../ui/scrspinbox.h
+)
+
+set(SCRIBUS_SMSCRSPINBOXPLUGIN_PLUGIN_SOURCES
+smscrspinboxplugin.cpp
+../../ui/smscrspinbox.cpp
+../../ui/scrspinbox.cpp
+)
+
+set(SCRIBUS_SMSHADEBUTTONPLUGIN_PLUGIN_MOC_CLASSES
+smshadebuttonplugin.h
+../../smshadebutton.h
+../../shadebutton.h
+)
+
+set(SCRIBUS_SMSHADEBUTTONPLUGIN_PLUGIN_SOURCES
+smshadebuttonplugin.cpp
+../../smshadebutton.cpp
+../../shadebutton.cpp
+)
+
+set(SCRIBUS_SMSPINBOXPLUGIN_PLUGIN_MOC_CLASSES
+smspinboxplugin.h
+../../smspinbox.h
+)
+
+set(SCRIBUS_SMSPINBOXPLUGIN_PLUGIN_SOURCES
+smspinboxplugin.cpp
+../../smspinbox.cpp
+)
+
+set(SCRIBUS_SMSTYLESELECTPLUGIN_PLUGIN_MOC_CLASSES
+smstyleselectplugin.h
+../../smstyleselect.h
+../../styleselect.h
+../../ui/scrspinbox.h
+)
+
+set(SCRIBUS_SMSTYLESELECTPLUGIN_PLUGIN_SOURCES
+smstyleselectplugin.cpp
+../../smstyleselect.cpp
+../../styleselect.cpp
+../../ui/scrspinbox.cpp
+)
+
+set(SCRIBUS_SMTABRULERPLUGIN_PLUGIN_MOC_CLASSES
+smtabrulerplugin.h
+../../smtabruler.h
+../../tabruler.h
+../../commonstrings.h
+)
+
+set(SCRIBUS_SMTABRULERPLUGIN_PLUGIN_SOURCES
+smtabrulerplugin.cpp
+../../smtabruler.cpp
+../../tabruler.cpp
+../../commonstrings.cpp
+)
+
+set(SCRIBUS_SMALIGNSELECTPLUGIN_PLUGIN "scribus_smalignselectplugin")
+set(SCRIBUS_SMCOLORCOMBOPLUGIN_PLUGIN "scribus_smcolorcomboplugin")
+set(SCRIBUS_SMFONTCOMBOHPLUGIN_PLUGIN "scribus_smfontcombohplugin")
+set(SCRIBUS_SMSCCOMBOBOXPLUGIN_PLUGIN "scribus_smsccomboboxplugin")
+set(SCRIBUS_SMSCRSPINBOXPLUGIN_PLUGIN "scribus_smscrspinboxplugin")
+set(SCRIBUS_SMSHADEBUTTONPLUGIN_PLUGIN "scribus_smshadebuttonplugin")
+set(SCRIBUS_SMSPINBOXPLUGIN_PLUGIN "scribus_smspinboxplugin")
+set(SCRIBUS_SMSTYLESELECTPLUGIN_PLUGIN "scribus_smstyleselectplugin")
+set(SCRIBUS_SMTABRULERPLUGIN_PLUGIN "scribus_smtabrulerplugin")
+QT5_WRAP_CPP(SCRIBUS_SMALIGNSELECTPLUGIN_PLUGIN_MOC_SOURCES ${SCRIBUS_SMALIGNSELECTPLUGIN_PLUGIN_MOC_CLASSES})
+QT5_WRAP_CPP(SCRIBUS_SMCOLORCOMBOPLUGIN_PLUGIN_MOC_SOURCES ${SCRIBUS_SMCOLORCOMBOPLUGIN_PLUGIN_MOC_CLASSES})
+QT5_WRAP_CPP(SCRIBUS_SMFONTCOMBOHPLUGIN_PLUGIN_MOC_SOURCES ${SCRIBUS_SMFONTCOMBOHPLUGIN_PLUGIN_MOC_CLASSES})
+QT5_WRAP_CPP(SCRIBUS_SMSCCOMBOBOXPLUGIN_PLUGIN_MOC_SOURCES ${SCRIBUS_SMSCCOMBOBOXPLUGIN_PLUGIN_MOC_CLASSES})
+QT5_WRAP_CPP(SCRIBUS_SMSCRSPINBOXPLUGIN_PLUGIN_MOC_SOURCES ${SCRIBUS_SMSCRSPINBOXPLUGIN_PLUGIN_MOC_CLASSES})
+QT5_WRAP_CPP(SCRIBUS_SMSHADEBUTTONPLUGIN_PLUGIN_MOC_SOURCES ${SCRIBUS_SMSHADEBUTTONPLUGIN_PLUGIN_MOC_CLASSES})
+QT5_WRAP_CPP(SCRIBUS_SMSPINBOXPLUGIN_PLUGIN_MOC_SOURCES ${SCRIBUS_SMSPINBOXPLUGIN_PLUGIN_MOC_CLASSES})
+QT5_WRAP_CPP(SCRIBUS_SMSTYLESELECTPLUGIN_PLUGIN_MOC_SOURCES ${SCRIBUS_SMSTYLESELECTPLUGIN_PLUGIN_MOC_CLASSES})
+QT5_WRAP_CPP(SCRIBUS_SMTABRULERPLUGIN_PLUGIN_MOC_SOURCES ${SCRIBUS_SMTABRULERPLUGIN_PLUGIN_MOC_CLASSES})
+add_library(${SCRIBUS_SMALIGNSELECTPLUGIN_PLUGIN}
+	SHARED ${SCRIBUS_SMALIGNSELECTPLUGIN_PLUGIN_SOURCES}
+	${SCRIBUS_SMALIGNSELECTPLUGIN_PLUGIN_MOC_SOURCES})
+target_link_libraries(${SCRIBUS_SMALIGNSELECTPLUGIN_PLUGIN} ${QT_LIBRARIES} )
+
+add_library(${SCRIBUS_SMCOLORCOMBOPLUGIN_PLUGIN}
+	SHARED ${SCRIBUS_SMCOLORCOMBOPLUGIN_PLUGIN_SOURCES}
+	${SCRIBUS_SMCOLORCOMBOPLUGIN_PLUGIN_MOC_SOURCES})
+target_link_libraries(${SCRIBUS_SMCOLORCOMBOPLUGIN_PLUGIN} ${QT_LIBRARIES} )
+
+add_library(${SCRIBUS_SMFONTCOMBOHPLUGIN_PLUGIN}
+	SHARED ${SCRIBUS_SMFONTCOMBOHPLUGIN_PLUGIN_SOURCES}
+	${SCRIBUS_SMFONTCOMBOHPLUGIN_PLUGIN_MOC_SOURCES})
+target_link_libraries(${SCRIBUS_SMFONTCOMBOHPLUGIN_PLUGIN} ${QT_LIBRARIES} )
+
+add_library(${SCRIBUS_SMSCCOMBOBOXPLUGIN_PLUGIN}
+	SHARED ${SCRIBUS_SMSCCOMBOBOXPLUGIN_PLUGIN_SOURCES}
+	${SCRIBUS_SMSCCOMBOBOXPLUGIN_PLUGIN_MOC_SOURCES})
+target_link_libraries(${SCRIBUS_SMSCCOMBOBOXPLUGIN_PLUGIN} ${QT_LIBRARIES} )
+
+add_library(${SCRIBUS_SMSCRSPINBOXPLUGIN_PLUGIN}
+	SHARED ${SCRIBUS_SMSCRSPINBOXPLUGIN_PLUGIN_SOURCES}
+	${SCRIBUS_SMSCRSPINBOXPLUGIN_PLUGIN_MOC_SOURCES})
+target_link_libraries(${SCRIBUS_SMSCRSPINBOXPLUGIN_PLUGIN} ${QT_LIBRARIES} )
+
+add_library(${SCRIBUS_SMSHADEBUTTONPLUGIN_PLUGIN}
+	SHARED ${SCRIBUS_SMSHADEBUTTONPLUGIN_PLUGIN_SOURCES}
+	${SCRIBUS_SMSHADEBUTTONPLUGIN_PLUGIN_MOC_SOURCES})
+target_link_libraries(${SCRIBUS_SMSHADEBUTTONPLUGIN_PLUGIN} ${QT_LIBRARIES} )
+
+add_library(${SCRIBUS_SMSPINBOXPLUGIN_PLUGIN}
+	SHARED ${SCRIBUS_SMSPINBOXPLUGIN_PLUGIN_SOURCES}
+	${SCRIBUS_SMSPINBOXPLUGIN_PLUGIN_MOC_SOURCES})
+target_link_libraries(${SCRIBUS_SMSPINBOXPLUGIN_PLUGIN} ${QT_LIBRARIES} )
+
+add_library(${SCRIBUS_SMSTYLESELECTPLUGIN_PLUGIN}
+	SHARED ${SCRIBUS_SMSTYLESELECTPLUGIN_PLUGIN_SOURCES}
+	${SCRIBUS_SMSTYLESELECTPLUGIN_PLUGIN_MOC_SOURCES})
+target_link_libraries(${SCRIBUS_SMSTYLESELECTPLUGIN_PLUGIN} ${QT_LIBRARIES} )
+
+add_library(${SCRIBUS_SMTABRULERPLUGIN_PLUGIN}
+	SHARED ${SCRIBUS_SMTABRULERPLUGIN_PLUGIN_SOURCES}
+	${SCRIBUS_SMTABRULERPLUGIN_PLUGIN_MOC_SOURCES})
+target_link_libraries(${SCRIBUS_SMTABRULERPLUGIN_PLUGIN} ${QT_LIBRARIES} )
+
+if(APPLE)
+  target_link_libraries(${SCRIBUS_SMALIGNSELECTPLUGIN_PLUGIN} "-undefined dynamic_lookup")
+
+  target_link_libraries(${SCRIBUS_SMCOLORCOMBOPLUGIN_PLUGIN} "-undefined dynamic_lookup")
+
+  target_link_libraries(${SCRIBUS_SMFONTCOMBOHPLUGIN_PLUGIN} "-undefined dynamic_lookup")
+
+  target_link_libraries(${SCRIBUS_SMSCCOMBOBOXPLUGIN_PLUGIN} "-undefined dynamic_lookup")
+
+  target_link_libraries(${SCRIBUS_SMSCRSPINBOXPLUGIN_PLUGIN} "-undefined dynamic_lookup")
+
+  target_link_libraries(${SCRIBUS_SMSHADEBUTTONPLUGIN_PLUGIN} "-undefined dynamic_lookup")
+
+  target_link_libraries(${SCRIBUS_SMSPINBOXPLUGIN_PLUGIN} "-undefined dynamic_lookup")
+
+  target_link_libraries(${SCRIBUS_SMSTYLESELECTPLUGIN_PLUGIN} "-undefined dynamic_lookup")
+
+  target_link_libraries(${SCRIBUS_SMTABRULERPLUGIN_PLUGIN} "-undefined dynamic_lookup")
+endif()

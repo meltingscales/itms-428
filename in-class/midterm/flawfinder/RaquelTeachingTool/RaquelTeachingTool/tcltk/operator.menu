@@ -1,0 +1,26 @@
+Compose-, Compose[   ] ,-4
+Difference-, Diff  ,0
+Divide-, Divide[   ] ,-4
+Extend-, Extend[   ],-3
+Group By-, GroupBy[   ] With[   ],-13
+Intersect-, Intersect ,0
+Generalised Join, Gen[   ] ,-4
+ Left Semi G Join, Gen[[   ] ,-4
+ Right Semi G Join, Gen[   ]] ,-5
+ Left Outer G Join, Gen[[   ]{  } ,-8
+ Right Outer G Join, Gen{  }[   ]] ,-9
+ Full Outer G Join, Gen{  }[[   ]]{  } ,-14
+Natural Join, Join[   ] ,-4
+ Left Semi N Join, Join[[   ] ,-4
+ Right Semi N Join, Join[   ]] ,-5
+ Left Outer N Join, Join[[   ]{  } ,-8
+ Right Outer N Join, Join{  }[   ]] ,-9
+ Full Outer N Join, Join{  }[[   ]]{  } ,-14
+Meta-, Meta[  ],-3
+Nest-, Nest[   ],-3
+Project, Project[   ],-3
+Rename-, Rename[   ],-4
+Restrict, Restrict[   ],-3
+Union-, Union  ,0
+Unnest-, Unnest[   ],-3
+
