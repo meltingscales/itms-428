@@ -1,0 +1,7 @@
+TABLE_NAME,TABLE_SCHEMA,CONSTRAINT_TYPE,CONSTRAINT_NAME,CONSTRAINT_SCHEMA,CONSTRAINT_CATALOG
+accounts,webscantest,PRIMARY KEY,PRIMARY,webscantest,def
+accounts,webscantest,UNIQUE,id,webscantest,def
+inventory,webscantest,UNIQUE,id,webscantest,def
+orders,webscantest,PRIMARY KEY,PRIMARY,webscantest,def
+products,webscantest,UNIQUE,id,webscantest,def
+

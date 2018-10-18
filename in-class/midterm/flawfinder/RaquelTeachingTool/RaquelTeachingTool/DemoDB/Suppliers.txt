@@ -1,0 +1,12 @@
+AMD	S1	0	California
+Intel	S2	0	New York
+OCZ	S3	1	Montreal
+Kingston	S4	1	Jamaica
+Seagate	S5	2	California
+Western Digital	S6	2	California
+Maxstore	S7	2	Taiwan
+Samsung	S8	2	Korea
+Samsung	S8	3	Korea
+Hitachi	S9	3	Japan
+Hitachi	S9	4	Japan
+Sony	S10	4	Japan

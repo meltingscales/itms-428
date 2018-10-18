@@ -1,0 +1,4 @@
+"Erreur d'analyseur : Incapable de créer Tree"
+"Erreur d'analyseur : Operands non équilibré" 
+"Erreur d'analyseur : Grandeur scalaire Function d'Unsuported" 
+"Erreur d'analyseur : Opérateur Associativity d'Inavlid"

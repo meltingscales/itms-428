@@ -1,0 +1,4 @@
+s  <--Retrieve Parts  Join[[ PType  ] Suppliers 
+s  <--Retrieve Parts  Join[ PType ]] Suppliers 
+s  <--Retrieve Suppliers  Gen[[ SID = CID  ] Customers
+s  <--Retrieve Suppliers  Gen[ SID = CID ]] Customers

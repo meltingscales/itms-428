@@ -1,0 +1,8 @@
+PACKED,COMMENT,SUB_PART,NULLABLE,INDEX_NAME,INDEX_TYPE,NON_UNIQUE,TABLE_NAME,COLLATION,CARDINALITY,COLUMN_NAME,INDEX_SCHEMA,TABLE_SCHEMA,SEQ_IN_INDEX,INDEX_COMMENT,TABLE_CATALOG
+NULL,<blank>,NULL,<blank>,PRIMARY,BTREE,0,accounts,A,2,id,webscantest,webscantest,1,<blank>,def
+NULL,<blank>,NULL,<blank>,id,BTREE,0,accounts,A,2,id,webscantest,webscantest,1,<blank>,def
+NULL,<blank>,NULL,<blank>,id_2,BTREE,1,accounts,A,2,id,webscantest,webscantest,1,<blank>,def
+NULL,<blank>,NULL,<blank>,id,BTREE,0,inventory,A,9,id,webscantest,webscantest,1,<blank>,def
+NULL,<blank>,NULL,<blank>,PRIMARY,BTREE,0,orders,A,0,id,webscantest,webscantest,1,<blank>,def
+NULL,<blank>,NULL,<blank>,id,BTREE,0,products,A,2,id,webscantest,webscantest,1,<blank>,def
+

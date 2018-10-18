@@ -1,0 +1,10 @@
+Hitachi	S9	Alnwick	400000
+BrokenBits	C4	Wooller	60000
+ChipsRUs	C1	Newcastle	100000
+Chumps	C2	Gateshead	95000
+Western Digital	S6	Morpeth	200000
+OCZ	S3	Scunthorpe	150000
+Kingston	S4	Newcastle	75000
+Seagate	S5	Newcastle	150000
+Querty	C3	Hexham	80000
+Trands	C5	Durham	220000

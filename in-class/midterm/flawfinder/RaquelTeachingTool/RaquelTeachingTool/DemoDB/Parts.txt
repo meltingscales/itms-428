@@ -1,0 +1,4 @@
+CPU	0
+RAM	1
+Harddisk	2
+DVDRom	3

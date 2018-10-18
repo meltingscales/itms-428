@@ -1,0 +1,4 @@
+SQL_PATH,SCHEMA_NAME,CATALOG_NAME,DEFAULT_COLLATION_NAME,DEFAULT_CHARACTER_SET_NAME
+NULL,information_schema,def,utf8_general_ci,utf8
+NULL,webscantest,def,latin1_swedish_ci,latin1
+

@@ -1,0 +1,25 @@
+#==============================================================
+#  Main.tk
+#
+#  This is the startup file that initialises the RAQUEL GUI.
+#  University of Northumbria
+#  Sebastian Kuschel
+#  May 1997
+#  Reorganisation of the header by Mesel Tesfaiesus, Nov. 2001
+#  Directory & lang constants added by G.Renard, April 2006
+#===============================================================
+
+#set the default language
+set lang "en"
+
+# set the current and tcltk directories
+set CURRENT_DIR [pwd]
+set TCLTK_DIR [pwd]/tcltk/
+
+# start the raquel program
+wm iconname . "RAQUEL"
+wm iconbitmap . "questhead"
+source ${TCLTK_DIR}raquel.tcltk
+
+# move to previous directory
+cd $CURRENT_DIR

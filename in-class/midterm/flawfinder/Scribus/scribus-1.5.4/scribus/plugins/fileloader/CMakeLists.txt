@@ -1,0 +1,5 @@
+#Subdirectories
+add_subdirectory(scribus150format)
+add_subdirectory(scribus134format)
+add_subdirectory(scribus13format)
+add_subdirectory(scribus12format)

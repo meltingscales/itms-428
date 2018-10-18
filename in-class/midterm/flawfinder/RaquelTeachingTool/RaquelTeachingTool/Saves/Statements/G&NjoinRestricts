@@ -1,0 +1,3 @@
+s  <--Retrieve Parts  Join[ PType  ] Suppliers  Restrict[ PType >= 2  ]
+s  <--Retrieve Suppliers  Gen[ SID = CID  ] Customers Restrict[ CustomerName Length > 6  ]
+s  <--Retrieve Suppliers  Gen[ SID = CID  ]  Customers Restrict[ CID Find[ '3' ] ]

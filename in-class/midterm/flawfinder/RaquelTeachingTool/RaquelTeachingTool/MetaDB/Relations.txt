@@ -1,0 +1,5 @@
+DefaultRelation	MetaDB/DefaultRelation.txt	Stack1	1	
+Parts	DemoDB/Parts.txt	Stack1	1	
+Suppliers	DemoDB/Suppliers.txt	Stack1	1	
+Customers	DemoDB/Customers.txt	Stack3	1	
+

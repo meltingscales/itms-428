@@ -1,0 +1,3 @@
+s  <--Retrieve Parts  Join[[ PType  ]{ SupplierName <-- 'no-one'; SID <-- 'S0'; Location <-- 'nowhere' } Suppliers 
+s  <--Retrieve Parts    Join{ PartName <-- 'none' }[ PType  ]]  Suppliers 
+s  <--Retrieve Parts    Join{ PartName <-- 'none' }[[ PType  ]]{ SupplierName <-- 'no-one'; SID <-- 'S0'; Location <-- 'nowhere' } Suppliers
