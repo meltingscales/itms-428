@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-xlrd = "*"
 six = "*"
 pip = "==18.0"
 mysqlclient = "==1.3.12"

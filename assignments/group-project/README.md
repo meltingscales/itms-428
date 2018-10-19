@@ -6,7 +6,7 @@ This folder contains all the materials needed to setup a database for the ITMS 4
 
 If you're using Linux, (I tested this on Ubuntu), you'll need to run the following command BEFORE setting up Python.
 
-`apt-get install libmysqlclient-dev python-dev`
+`apt-get install libmysqlclient-dev python-dev libssl-dev`
 
 This is because the 'mysqlclient' package is built from source with the version I'm using, at least for Linux.
 
