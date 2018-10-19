@@ -2,6 +2,16 @@
 
 This folder contains all the materials needed to setup a database for the ITMS 428 group project.
 
+# EXTRA SETUP FOR LINUX
+
+If you're using Linux, (I tested this on Ubuntu), you'll need to run the following command BEFORE setting up Python.
+
+`apt-get install libmysqlclient-dev python-dev`
+
+This is because the 'mysqlclient' package is built from source with the version I'm using, at least for Linux.
+
+It presumably needs `libmysqlclient-dev`'s source files, as well as `python-dev`'s source files too.
+
 # SETUP DATABASE
 
 I'll have you all use MySQL because of its popularity, and because it's easy to install on Windows, Linux, and OSX.
