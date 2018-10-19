@@ -1,5 +1,6 @@
 import os
 import xlrd
+import MySQLdb
 
 PROJECT_DIR = os.path.dirname(__file__)
 LOGIN_FILE_NAME = 'login_info.txt'
@@ -41,3 +42,7 @@ if __name__ == '__main__':
 
     print(f"Using the following credentials from '{LOGIN_FILE_NAME}':")
     print(f"{username}:<PASSWORD>")
+
+    connection = MySQLdb.connect(SERVER_IP, username, password)
+    print(connection)
+    print("If you see some stuff in angle brackets above, IT WORKED! CONGRATULES!")

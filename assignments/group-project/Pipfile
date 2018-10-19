@@ -5,6 +5,9 @@ name = "pypi"
 
 [packages]
 xlrd = "*"
+six = "*"
+pip = "==18.0"
+mysqlclient = "==1.3.12"
 
 [dev-packages]
 
