@@ -5,6 +5,26 @@ import MySQLdb
 PROJECT_DIR = os.path.dirname(__file__)
 LOGIN_FILE_NAME = 'login_info.txt'
 SERVER_IP = '127.0.0.1'  # I'm assuming you're running this locally.
+DATABASE_NAME = 'itms428'
+
+
+def has_database(connection: MySQLdb.connection, name: str) -> bool:
+    result: MySQLdb.result
+
+    result = connection.query(
+        f"""SELECT SCHEMA_NAME
+                FROM
+            INFORMATION_SCHEMA.SCHEMATA
+                WHERE SCHEMA_NAME = '{name}'""")
+
+    result = connection.store_result()
+
+    rows = result.fetch_row()
+
+    if len(rows) is 0:
+        return False
+
+    return True
 
 
 def get_login_creds(path: str) -> (str, str,):
@@ -43,6 +63,13 @@ if __name__ == '__main__':
     print(f"Using the following credentials from '{LOGIN_FILE_NAME}':")
     print(f"{username}:<PASSWORD>")
 
-    connection = MySQLdb.connect(SERVER_IP, username, password)
+    connection = MySQLdb.connect(host=SERVER_IP, user=username, passwd=password)
     print(connection)
     print("If you see some stuff in angle brackets above, IT WORKED! CONGRATULES!")
+
+    # If they don't have the database, create it.
+    if not has_database(connection, DATABASE_NAME):
+        print(f"DB '{DATABASE_NAME}' does not exist. Creating...")
+        connection.query(f"CREATE DATABASE {DATABASE_NAME}")
+    else:
+        print(f"DB '{DATABASE_NAME}' exists.")
