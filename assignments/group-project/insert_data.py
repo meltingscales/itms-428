@@ -2,10 +2,16 @@ import os
 
 import MySQLdb
 
+from data.mysql_sample_db import *
+
 PROJECT_DIR = os.path.dirname(__file__)
 LOGIN_FILE_NAME = 'login_info.txt'
 SERVER_IP = '127.0.0.1'  # I'm assuming you're running this locally.
 DATABASE_NAME = 'itms428'
+
+
+class MySQLSampleDB(object):
+    path = os.path.join(PROJECT_DIR, 'data/mysqlsampledatabase.sql')
 
 
 class FarmerDatabase(object):
@@ -169,3 +175,21 @@ if __name__ == '__main__':
         print(f"You don't have the {FarmerDatabase.name} table, so we'll make it.")
         FarmerDatabase.create_table(connection)
         FarmerDatabase.insert_all_data(connection)
+
+    check_and_insert: [GenericData] = [ProductLinesData, EmployeeData, CustomerData, PaymentsData, OfficesData, OrdersData, ProductsData, OrderDetailsData]
+
+    for datum in check_and_insert:
+        if not has_table(connection, datum.table_name):
+            print(f"You don't have the {datum.table_name} table, so we'll make it.")
+
+            try:
+                connection.query(datum.table_def)
+            except Exception as e:
+                print(e)
+                print(datum.table_def)
+
+            try:
+                connection.query(datum.insert_statements)
+            except Exception as e:
+                print(e)
+                print(datum.insert_statements)
