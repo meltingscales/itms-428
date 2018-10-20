@@ -175,6 +175,8 @@ if __name__ == '__main__':
         print(f"You don't have the {FarmerDatabase.name} table, so we'll make it.")
         FarmerDatabase.create_table(connection)
         FarmerDatabase.insert_all_data(connection)
+    else:
+        print(f"You have the {FarmerDatabase.name} table. Not modifying it.")
 
     check_and_insert: [GenericData] = [ProductLinesData, EmployeeData, CustomerData, PaymentsData, OfficesData, OrdersData, ProductsData, OrderDetailsData]
 
@@ -193,3 +195,5 @@ if __name__ == '__main__':
             except Exception as e:
                 print(e)
                 print(datum.insert_statements)
+        else:
+            print(f"You have the {datum.table_name} table. Not modifying it.")
