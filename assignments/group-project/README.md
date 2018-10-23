@@ -12,6 +12,10 @@ This is because the 'mysqlclient' package is built from source with the version 
 
 It presumably needs `libmysqlclient-dev`'s source files, as well as `python-dev`'s source files too.
 
+# CLONE THIS REPO
+
+Install `git` and run `git clone https://github.com/HenryFBP/itms-428.git`, or download this project as a .ZIP file.
+
 # SETUP DATABASE
 
 I'll have you all use MySQL because of its popularity, and because it's easy to install on Windows, Linux, and OSX.
@@ -36,16 +40,16 @@ I'll have you all use MySQL because of its popularity, and because it's easy to 
 
 2. Make sure `pip` is installed. To test this, run `pip` anywhere.
 
-3. Inside this folder, run `pip install pipenv`.
+3. Inside this folder in this repository, run `pip install pipenv`.
    This installs a module for Python called 'pipenv', which I use to manage dependencies.
    You may notice a file called `Pipfile`. That's where I put all the dependencies!
    
-4. Inside this folder, run `pipenv install`.
+4. Inside this folder in this repository, run `pipenv install`.
    
    This tells pipenv to create a virtual environment, segregated from your system's Python
    installation, that has the dependencies located in the Pipfile.
 
-5. Make a file in this folder called `login_info.txt`.
+5. Make a file in this folder in this repository called `login_info.txt`.
 
    On the first line, put the username.
    On the second line, put the password.
