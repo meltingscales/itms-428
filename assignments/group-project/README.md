@@ -62,3 +62,5 @@ I'll have you all use MySQL because of its popularity, and because it's easy to 
 That's it for setup!
 
 To run any script, use `pipenv run python script_name.py`.
+
+To run my database setup script, run `pipenv run python insert_data.py`.
