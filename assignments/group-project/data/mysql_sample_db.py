@@ -1,9 +1,91 @@
+import MySQLdb
+
+from constants import *
+
+
 class GenericData(object):
     table_name = 'generic_table'
     table_def = f"""CREATE TABLE `{table_name}` (
         `ID` INTEGER PRIMARY KEY NOT NULL
     )"""
     insert_statements = f"""INSERT INTO `{table_name}` VALUES (1,2,3,4)"""
+
+
+class MySQLSampleDB(object):
+    path = os.path.join(PROJECT_DIR, 'data/mysqlsampledatabase.sql')
+
+
+class FarmerDatabase(object):
+    name = 'farmer_payment'
+    data_filepath = os.path.join(PROJECT_DIR, 'data/2008_farmer_payment_data.big.txt')
+    delimiter = ';'
+    limit = 10000
+
+    @classmethod
+    def create_table(cls, connection: MySQLdb.connection):
+        connection.query(f'''
+        CREATE TABLE {cls.name} (
+            id      INTEGER     NOT NULL UNIQUE AUTO_INCREMENT,
+            n1      INTEGER     NOT NULL,
+            n2      INTEGER     NOT NULL,
+            anum    VARCHAR(20) NOT NULL,
+            n3      INTEGER     NOT NULL,
+            year1   INTEGER     NOT NULL,
+            n4      INTEGER     NOT NULL,
+            money   DOUBLE      NOT NULL,
+            date1   DATE        NOT NULL,
+            zone    VARCHAR(20) NOT NULL,
+            n5      INTEGER     NOT NULL,
+            year2   INTEGER     NOT NULL,
+            year3   INTEGER     NOT NULL,
+            n6      INTEGER     NOT NULL            
+        );
+
+        ''')
+
+    @classmethod
+    def insert_all_data(cls, connection: MySQLdb.connection):
+        file = open(cls.data_filepath, 'r')
+
+        i = 0
+        for line in file:
+            line = line.strip()
+
+            values = line.split(cls.delimiter)  # Split by delimiter
+            values = [value.strip() for value in values]  # Remove whitespace
+
+            for x in [0, 1, 3, 4, 5, 9, 10, 11, 12]:  # These ones are ints.
+                values[x] = int(values[x])
+
+            values[6] = float(values[6].replace(',', ''))  # This is the money amount. It may have a comma.
+            # print(values)
+
+            formatted_values = []
+
+            for value in values:
+                if isinstance(value, str):
+                    formatted_values.append(f"'{value}'")
+                else:
+                    formatted_values.append(str(value))
+
+            insert_statement = f'''INSERT INTO {cls.name} 
+            VALUES(NULL, {','.join([str(value) for value in formatted_values])})'''
+
+            connection.autocommit = False
+            connection.query(insert_statement)
+
+            if i >= cls.limit:
+                print(f"I think {cls.limit} rows for {cls.name} is enough.")
+                break
+
+            i += 1
+
+        print(f"Inserted {i} rows into {cls.name}.")
+
+        connection.commit()
+
+        file.close()
+
 
 class ProductLinesData(GenericData):
     table_name = 'productlines'
@@ -23,6 +105,7 @@ class ProductLinesData(GenericData):
 ('Trucks and Buses','The Truck and Bus models are realistic replicas of buses and specialized trucks produced from the early 1920s to present. The models range in size from 1:12 to 1:50 scale and include numerous limited edition and several out-of-production vehicles. Materials used include tin, diecast and plastic. All models include a certificate of authenticity from their manufacturers and are a perfect ornament for the home and office.',NULL,NULL),
 ('Vintage Cars','Our Vintage Car models realistically portray automobiles produced from the early 1900s through the 1940s. Materials used include Bakelite, diecast, plastic and wood. Most of the replicas are in the 1:18 and 1:24 scale sizes, which provide the optimum in detail and accuracy. Prices range from $30.00 up to $180.00 for some special limited edition replicas. All models include a certificate of authenticity from their manufacturers and come fully assembled and ready for display in the home or office.',NULL,NULL);
 """
+
 
 class EmployeeData(GenericData):
     table_name = 'employees'
@@ -66,6 +149,7 @@ CONSTRAINT `employees_ibfk_2` FOREIGN KEY (`officeCode`) REFERENCES `offices` (`
     (1621,'Nishi','Mami','x101','mnishi@classicmodelcars.com','5',1056,'Sales Rep'),
     (1625,'Kato','Yoshimi','x102','ykato@classicmodelcars.com','5',1621,'Sales Rep'),
     (1702,'Gerard','Martin','x2312','mgerard@classicmodelcars.com','4',1102,'Sales Rep');"""
+
 
 class CustomerData(GenericData):
     table_name = 'customers'
@@ -213,6 +297,7 @@ class CustomerData(GenericData):
         (495,'Diecast Collectables','Franco','Valarie','6175552555','6251 Ingle Ln.',NULL,'Boston','MA','51003','USA',1188,'85100.00'),
         (496,'Kellys Gift Shop','Snowden','Tony','+64 9 5555500','Arenales 1938 3A',NULL,'Auckland  ',NULL,NULL,'New Zealand',1612,'110000.00');
     """
+
 
 class PaymentsData(GenericData):
     table_name = 'payments'
@@ -500,6 +585,7 @@ class PaymentsData(GenericData):
 (496,'MN89921','2004-12-31','52166.00');
 """
 
+
 class OfficesData(GenericData):
     table_name = 'offices'
     table_def = f"""
@@ -523,6 +609,7 @@ class OfficesData(GenericData):
     ('5','Tokyo','+81 33 224 5000','4-1 Kioicho',NULL,'Chiyoda-Ku','Japan','102-8578','Japan'),
     ('6','Sydney','+61 2 9264 2451','5-11 Wentworth Avenue','Floor #2',NULL,'Australia','NSW 2010','APAC'),
     ('7','London','+44 20 7877 2041','25 Old Broad Street','Level 7',NULL,'UK','EC2N 1HN','EMEA');"""
+
 
 class OrdersData(GenericData):
     table_name = 'orders'
@@ -867,6 +954,7 @@ class OrdersData(GenericData):
 (10425,'2005-05-31','2005-06-07',NULL,'In Process',NULL,119);
 """
 
+
 class ProductsData(GenericData):
     table_name = f'products'
     table_def = f"""CREATE TABLE `{table_name}` (
@@ -883,7 +971,7 @@ class ProductsData(GenericData):
   KEY `productLine` (`productLine`),
   CONSTRAINT `products_ibfk_1` FOREIGN KEY (`productLine`) REFERENCES `{ProductLinesData.table_name}` (`productLine`)
 );"""
-    
+
     insert_statements = f"""insert  into `{table_name}`(`productCode`,`productName`,`productLine`,`productScale`,`productVendor`,`productDescription`,`quantityInStock`,`buyPrice`,`MSRP`) values 
 ('S10_1678','1969 Harley Davidson Ultimate Chopper','Motorcycles','1:10','Min Lin Diecast','This replica features working kickstand, front suspension, gear-shift lever, footbrake lever, drive chain, wheels and steering. All parts are particularly delicate due to their precise scale and require special care and attention.',7933,'48.81','95.70'),
 ('S10_1949','1952 Alpine Renault 1300','Classic Cars','1:10','Classic Metal Creations','Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.',7305,'98.58','214.30'),
@@ -996,6 +1084,7 @@ class ProductsData(GenericData):
 ('S72_1253','Boeing X-32A JSF','Planes','1:72','Motor City Art Classics','10 Wingspan with retractable landing gears.Comes with pilot',4857,'32.77','49.66'),
 ('S72_3212','Pont Yacht','Ships','1:72','Unimax Art Galleries','Measures 38 inches Long x 33 3/4 inches High. Includes a stand.Many extras including rigging, long boats, pilot house, anchors, etc. Comes with 2 masts, all square-rigged',414,'33.30','54.60');
 """
+
 
 class OrderDetailsData(GenericData):
     table_name = 'orderdetails'

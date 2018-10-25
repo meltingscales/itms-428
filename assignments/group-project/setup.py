@@ -1,90 +1,5 @@
-import os
-
-import MySQLdb
-
 from data.mysql_sample_db import *
-from user import User
-
-PROJECT_DIR = os.path.dirname(__file__)
-LOGIN_FILE_NAME = 'login_info.txt'
-SERVER_IP = '127.0.0.1'  # I'm assuming you're running this locally.
-DATABASE_NAME = 'itms428'
-
-
-class MySQLSampleDB(object):
-    path = os.path.join(PROJECT_DIR, 'data/mysqlsampledatabase.sql')
-
-
-class FarmerDatabase(object):
-    name = 'farmer_payment'
-    data_filepath = os.path.join(PROJECT_DIR, 'data/2008_farmer_payment_data.big.txt')
-    delimiter = ';'
-    limit = 10000
-
-    @classmethod
-    def create_table(cls, connection: MySQLdb.connection):
-        connection.query(f'''
-        CREATE TABLE {cls.name} (
-            id      INTEGER     NOT NULL UNIQUE AUTO_INCREMENT,
-            n1      INTEGER     NOT NULL,
-            n2      INTEGER     NOT NULL,
-            anum    VARCHAR(20) NOT NULL,
-            n3      INTEGER     NOT NULL,
-            year1   INTEGER     NOT NULL,
-            n4      INTEGER     NOT NULL,
-            money   DOUBLE      NOT NULL,
-            date1   DATE        NOT NULL,
-            zone    VARCHAR(20) NOT NULL,
-            n5      INTEGER     NOT NULL,
-            year2   INTEGER     NOT NULL,
-            year3   INTEGER     NOT NULL,
-            n6      INTEGER     NOT NULL            
-        );
-            
-        ''')
-
-    @classmethod
-    def insert_all_data(cls, connection: MySQLdb.connection):
-        file = open(cls.data_filepath, 'r')
-
-        i = 0
-        for line in file:
-            line = line.strip()
-
-            values = line.split(cls.delimiter)  # Split by delimiter
-            values = [value.strip() for value in values]  # Remove whitespace
-
-            for x in [0, 1, 3, 4, 5, 9, 10, 11, 12]:  # These ones are ints.
-                values[x] = int(values[x])
-
-            values[6] = float(values[6].replace(',', ''))  # This is the money amount. It may have a comma.
-            # print(values)
-
-            formatted_values = []
-
-            for value in values:
-                if isinstance(value, str):
-                    formatted_values.append(f"'{value}'")
-                else:
-                    formatted_values.append(str(value))
-
-            insert_statement = f'''INSERT INTO {cls.name} 
-            VALUES(NULL, {','.join([str(value) for value in formatted_values])})'''
-
-            connection.autocommit = False
-            connection.query(insert_statement)
-
-            if i >= cls.limit:
-                print(f"I think {cls.limit} rows for {cls.name} is enough.")
-                break
-
-            i += 1
-
-        print(f"Inserted {i} rows into {cls.name}.")
-
-        connection.commit()
-
-        file.close()
+from user import ALL_USERS
 
 
 def has_database(connection: MySQLdb.connection, name: str) -> bool:
@@ -201,20 +116,7 @@ def create_tables(connection: MySQLdb.connection):
 
 
 def create_users(connection: MySQLdb.Connection):
-    users = [
-        User(username=f'{DATABASE_NAME}_farmer_payment', password='iamafarmer',
-             table_privs={
-                 f"{DATABASE_NAME}.{FarmerDatabase.name}": ["UPDATE"]
-             }),
-
-        User(username=f'{DATABASE_NAME}_product_manager', password='icannotmanage',
-             table_privs={
-                 f"{DATABASE_NAME}.{ProductLinesData.table_name}": ["CREATE", "UPDATE", "DELETE"],
-                 f"{DATABASE_NAME}.{ProductsData.table_name}": ["CREATE", "UPDATE", "DELETE"],
-             }),
-    ]
-
-    for user in users:
+    for user in ALL_USERS:
 
         if not has_user(connection, user.username):
             print(f"Creating user '{user.username}...'")
@@ -224,7 +126,7 @@ def create_users(connection: MySQLdb.Connection):
             connection.query(qstr)
 
         if has_user(connection, user.username):
-            print(f"\nUser '{user.username}' already exists.")
+            print(f"User '{user.username}' already exists.")
 
         if len(user.global_privs) > 0:
             print(f"Granting global privileges for '{user.username}'.")
@@ -237,6 +139,8 @@ def create_users(connection: MySQLdb.Connection):
             qstr = user.grant_table_priv()
             print(qstr)
             connection.query(qstr)
+
+        print()
 
 
 if __name__ == '__main__':

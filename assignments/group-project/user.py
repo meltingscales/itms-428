@@ -1,3 +1,6 @@
+from data.mysql_sample_db import *
+
+
 class User(object):
 
     def __init__(self, *args, **kwargs):
@@ -28,3 +31,22 @@ class User(object):
             ret = ret + f"GRANT {', '.join(priviledges)} ON {table_name} TO {self.name_and_host()};\n"
 
         return ret
+
+
+ALL_USERS = [
+    User(username=f'{DATABASE_NAME}_admin', password='totallysecure',
+         table_privs={
+             f"{DATABASE_NAME}.*": ["ALL"]
+         }),
+
+    User(username=f'{DATABASE_NAME}_farmer_payment', password='iamafarmer',
+         table_privs={
+             f"{DATABASE_NAME}.{FarmerDatabase.name}": ["UPDATE", "CREATE"]
+         }),
+
+    User(username=f'{DATABASE_NAME}_product_manager', password='icannotmanage',
+         table_privs={
+             f"{DATABASE_NAME}.{ProductLinesData.table_name}": ["CREATE", "UPDATE", "DELETE"],
+             f"{DATABASE_NAME}.{ProductsData.table_name}": ["CREATE", "UPDATE", "DELETE"],
+         }),
+]
