@@ -201,21 +201,42 @@ def create_tables(connection: MySQLdb.connection):
 
 
 def create_users(connection: MySQLdb.Connection):
+    users = [
+        User(username=f'{DATABASE_NAME}_farmer_payment', password='iamafarmer',
+             table_privs={
+                 f"{DATABASE_NAME}.{FarmerDatabase.name}": ["UPDATE"]
+             }),
 
-    users = frozenset([
-        User(username='test_user', password='test_password'),
-        User(username='billybob', password='coolpass'),
-    ])
+        User(username=f'{DATABASE_NAME}_product_manager', password='icannotmanage',
+             table_privs={
+                 f"{DATABASE_NAME}.{ProductLinesData.table_name}": ["CREATE", "UPDATE", "DELETE"],
+                 f"{DATABASE_NAME}.{ProductsData.table_name}": ["CREATE", "UPDATE", "DELETE"],
+             }),
+    ]
 
     for user in users:
+
         if not has_user(connection, user.username):
             print(f"Creating user '{user.username}...'")
 
             qstr = user.create_statement()
             print(qstr)
             connection.query(qstr)
-        else:
-            print(f"User '{user.username}' already exists.")
+
+        if has_user(connection, user.username):
+            print(f"\nUser '{user.username}' already exists.")
+
+        if len(user.global_privs) > 0:
+            print(f"Granting global privileges for '{user.username}'.")
+            qstr = user.grant_global_priv()
+            print(qstr)
+            connection.query(qstr)
+
+        if len(user.table_privs.keys()) > 0:
+            print(f"Granting table privileges for '{user.username}'.")
+            qstr = user.grant_table_priv()
+            print(qstr)
+            connection.query(qstr)
 
 
 if __name__ == '__main__':
