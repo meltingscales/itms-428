@@ -16,7 +16,7 @@ class MySQLSampleDB(object):
 
 
 class FarmerDatabase(object):
-    name = 'farmer_payment'
+    table_name = 'farmer_payment'
     data_filepath = os.path.join(PROJECT_DIR, 'data/2008_farmer_payment_data.big.txt')
     delimiter = ';'
     limit = 10000
@@ -24,7 +24,7 @@ class FarmerDatabase(object):
     @classmethod
     def create_table(cls, connection: MySQLdb.connection):
         connection.query(f'''
-        CREATE TABLE {cls.name} (
+        CREATE TABLE {cls.table_name} (
             id      INTEGER     NOT NULL UNIQUE AUTO_INCREMENT,
             n1      INTEGER     NOT NULL,
             n2      INTEGER     NOT NULL,
@@ -68,19 +68,19 @@ class FarmerDatabase(object):
                 else:
                     formatted_values.append(str(value))
 
-            insert_statement = f'''INSERT INTO {cls.name} 
+            insert_statement = f'''INSERT INTO {cls.table_name} 
             VALUES(NULL, {','.join([str(value) for value in formatted_values])})'''
 
             connection.autocommit = False
             connection.query(insert_statement)
 
             if i >= cls.limit:
-                print(f"I think {cls.limit} rows for {cls.name} is enough.")
+                print(f"I think {cls.limit} rows for {cls.table_name} is enough.")
                 break
 
             i += 1
 
-        print(f"Inserted {i} rows into {cls.name}.")
+        print(f"Inserted {i} rows into {cls.table_name}.")
 
         connection.commit()
 

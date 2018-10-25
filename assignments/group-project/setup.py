@@ -24,11 +24,9 @@ def has_database(connection: MySQLdb.connection, name: str) -> bool:
 def has_user(connection: MySQLdb.connection, name: str) -> bool:
     result: MySQLdb.result
 
-    connection.query(f"""USE mysql;""")
+    cstr = f"""SELECT User FROM mysql.user WHERE User = "{name}";"""
 
-    connection.query(f"""
-        SELECT * FROM user WHERE User = "{name}";  
-    """)
+    connection.query(cstr)
 
     result = connection.store_result()
 
@@ -86,12 +84,12 @@ def get_login_creds(path: str) -> (str, str,):
 
 
 def create_tables(connection: MySQLdb.connection):
-    if not has_table(connection, FarmerDatabase.name):
-        print(f"You don't have the {FarmerDatabase.name} table, so we'll make it.")
+    if not has_table(connection, FarmerDatabase.table_name):
+        print(f"You don't have the {FarmerDatabase.table_name} table, so we'll make it.")
         FarmerDatabase.create_table(connection)
         FarmerDatabase.insert_all_data(connection)
     else:
-        print(f"You have the {FarmerDatabase.name} table. Not modifying it.")
+        print(f"You have the {FarmerDatabase.table_name} table. Not modifying it.")
 
     check_and_insert: [GenericData] = [ProductLinesData, EmployeeData, CustomerData, PaymentsData, OfficesData,
                                        OrdersData, ProductsData, OrderDetailsData]
@@ -136,9 +134,12 @@ def create_users(connection: MySQLdb.Connection):
 
         if len(user.table_privs.keys()) > 0:
             print(f"Granting table privileges for '{user.username}'.")
-            qstr = user.grant_table_priv()
-            print(qstr)
-            connection.query(qstr)
+
+            qstrs = user.grant_table_priv()
+
+            for qstr in qstrs:
+                print(qstr)
+                connection.query(qstr)
 
         print()
 

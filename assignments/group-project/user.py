@@ -21,14 +21,14 @@ class User(object):
 
         return f"GRANT {allprivs} ON *.* TO {self.name_and_host()};"
 
-    def grant_table_priv(self) -> str:
-        ret = ""
+    def grant_table_priv(self) -> [str]:
+        ret = []
 
         table_name: str
-        priviledges: [str]
+        privileges: [str]
 
-        for table_name, priviledges in self.table_privs.items():
-            ret = ret + f"GRANT {', '.join(priviledges)} ON {table_name} TO {self.name_and_host()};\n"
+        for table_name, privileges in self.table_privs.items():
+            ret.append(f"GRANT {', '.join(privileges)} ON {table_name} TO {self.name_and_host()};")
 
         return ret
 
@@ -41,12 +41,30 @@ ALL_USERS = [
 
     User(username=f'{DATABASE_NAME}_farmer_payment', password='iamafarmer',
          table_privs={
-             f"{DATABASE_NAME}.{FarmerDatabase.name}": ["UPDATE", "CREATE"]
+             f"{DATABASE_NAME}.{FarmerDatabase.table_name}": ["SELECT", "CREATE", "UPDATE"]
          }),
 
     User(username=f'{DATABASE_NAME}_product_manager', password='icannotmanage',
          table_privs={
-             f"{DATABASE_NAME}.{ProductLinesData.table_name}": ["CREATE", "UPDATE", "DELETE"],
-             f"{DATABASE_NAME}.{ProductsData.table_name}": ["CREATE", "UPDATE", "DELETE"],
+             f"{DATABASE_NAME}.{ProductLinesData.table_name}": ["SELECT", "CREATE", "UPDATE", "DELETE"],
+             f"{DATABASE_NAME}.{ProductsData.table_name}": ["SELECT", "CREATE", "UPDATE", "DELETE"],
+             f"{DATABASE_NAME}.{OfficesData.table_name}": ["SELECT"],
          }),
+
+    User(username=f"{DATABASE_NAME}_payment_manager", password='cashmoney',
+         table_privs={
+             f"{DATABASE_NAME}.{PaymentsData.table_name}": ["SELECT", "CREATE", "UPDATE"],
+             f"{DATABASE_NAME}.{OrdersData.table_name}": ["SELECT", "UPDATE"],
+             f"{DATABASE_NAME}.{OrderDetailsData.table_name}": ["SELECT", "UPDATE"],
+             f"{DATABASE_NAME}.{CustomerData.table_name}": ["SELECT"],
+             f"{DATABASE_NAME}.{FarmerDatabase.table_name}": ["SELECT"],
+         }),
+
+    User(username=f'{DATABASE_NAME}_human_resources', password='givemeyourorgansmeatbags!!!',
+         table_privs={
+             f"{DATABASE_NAME}.{CustomerData.table_name}": ["SELECT", "CREATE", "UPDATE", "DELETE"],
+             f"{DATABASE_NAME}.{EmployeeData.table_name}": ["SELECT", "CREATE", "UPDATE", "DELETE"],
+             f"{DATABASE_NAME}.{OfficesData.table_name}": ["SELECT"],
+         }),
+
 ]
