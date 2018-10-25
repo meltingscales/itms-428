@@ -3,6 +3,7 @@ import os
 import MySQLdb
 
 from data.mysql_sample_db import *
+from user import User
 
 PROJECT_DIR = os.path.dirname(__file__)
 LOGIN_FILE_NAME = 'login_info.txt'
@@ -105,6 +106,25 @@ def has_database(connection: MySQLdb.connection, name: str) -> bool:
     return True
 
 
+def has_user(connection: MySQLdb.connection, name: str) -> bool:
+    result: MySQLdb.result
+
+    connection.query(f"""USE mysql;""")
+
+    connection.query(f"""
+        SELECT * FROM user WHERE User = "{name}";  
+    """)
+
+    result = connection.store_result()
+
+    rows = result.fetch_row()
+
+    if len(rows) is 0:
+        return False
+
+    return True
+
+
 def has_table(connection: MySQLdb.connection, name: str) -> bool:
     result: MySQLdb.result
 
@@ -150,6 +170,54 @@ def get_login_creds(path: str) -> (str, str,):
     return username, password
 
 
+def create_tables(connection: MySQLdb.connection):
+    if not has_table(connection, FarmerDatabase.name):
+        print(f"You don't have the {FarmerDatabase.name} table, so we'll make it.")
+        FarmerDatabase.create_table(connection)
+        FarmerDatabase.insert_all_data(connection)
+    else:
+        print(f"You have the {FarmerDatabase.name} table. Not modifying it.")
+
+    check_and_insert: [GenericData] = [ProductLinesData, EmployeeData, CustomerData, PaymentsData, OfficesData,
+                                       OrdersData, ProductsData, OrderDetailsData]
+
+    for datum in check_and_insert:
+        if not has_table(connection, datum.table_name):
+            print(f"You don't have the {datum.table_name} table, so we'll make it.")
+
+            try:
+                connection.query(datum.table_def)
+            except Exception as e:
+                print(e)
+                print(datum.table_def)
+
+            try:
+                connection.query(datum.insert_statements)
+            except Exception as e:
+                print(e)
+                print(datum.insert_statements)
+        else:
+            print(f"You have the {datum.table_name} table. Not modifying it.")
+
+
+def create_users(connection: MySQLdb.Connection):
+
+    users = frozenset([
+        User(username='test_user', password='test_password'),
+        User(username='billybob', password='coolpass'),
+    ])
+
+    for user in users:
+        if not has_user(connection, user.username):
+            print(f"Creating user '{user.username}...'")
+
+            qstr = user.create_statement()
+            print(qstr)
+            connection.query(qstr)
+        else:
+            print(f"User '{user.username}' already exists.")
+
+
 if __name__ == '__main__':
     username, password = get_login_creds(os.path.join(PROJECT_DIR, LOGIN_FILE_NAME))
 
@@ -171,29 +239,6 @@ if __name__ == '__main__':
     # Use the database.
     connection.query(f'USE {DATABASE_NAME};')
 
-    if not has_table(connection, FarmerDatabase.name):
-        print(f"You don't have the {FarmerDatabase.name} table, so we'll make it.")
-        FarmerDatabase.create_table(connection)
-        FarmerDatabase.insert_all_data(connection)
-    else:
-        print(f"You have the {FarmerDatabase.name} table. Not modifying it.")
+    create_tables(connection)
 
-    check_and_insert: [GenericData] = [ProductLinesData, EmployeeData, CustomerData, PaymentsData, OfficesData, OrdersData, ProductsData, OrderDetailsData]
-
-    for datum in check_and_insert:
-        if not has_table(connection, datum.table_name):
-            print(f"You don't have the {datum.table_name} table, so we'll make it.")
-
-            try:
-                connection.query(datum.table_def)
-            except Exception as e:
-                print(e)
-                print(datum.table_def)
-
-            try:
-                connection.query(datum.insert_statements)
-            except Exception as e:
-                print(e)
-                print(datum.insert_statements)
-        else:
-            print(f"You have the {datum.table_name} table. Not modifying it.")
+    create_users(connection)
