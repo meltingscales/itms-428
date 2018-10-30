@@ -51,8 +51,8 @@ I'll have you all use MySQL because of its popularity, and because it's easy to 
 
 5. Make a file in this folder in this repository called `login_info.txt`.
 
-   On the first line, put the username.
-   On the second line, put the password.
+   On the first line, put the username to login to MySQL.
+   On the second line, put the password to login to MySQL.
    
    This file will NOT be tracked by Git, due to the `/.gitignore` file at the repo's root.
    
