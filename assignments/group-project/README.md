@@ -86,3 +86,22 @@ getting errors like:
     ModuleNotFoundError: No module named 'flaskext'
 
 Run `pipenv install` to update your Python virtual environment.
+
+## FOR LINUX USERS
+
+### Can't login to MySQL server with correct credentials
+
+This section is courtesy of Dennis, who uses Lubuntu.
+
+If you use Linux, speficially *buntu distros, you may have trouble
+logging into the MySQL server, even with correct creds.
+
+His problem ended up being a MySQL plugin called `auth_socket` that
+essentially made his life hell for a couple weeks.
+
+See [this link](https://stackoverflow.com/a/43659857/4262535) for the
+Stack Overflow comment that fixed his problem.
+
+If it doesn't fix the issue, there are a plethora of other guides
+available online. A fresh install of EVERYTHING MYSQL, like using
+`sudo apt-get purge --remove <PACKAGE_NAME>`, might work.
