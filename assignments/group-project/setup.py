@@ -1,5 +1,27 @@
 from data.mysql_sample_db import *
+from trigger import triggers
 from user import ALL_USERS
+
+
+def has_trigger(connection: MySQLdb.connection, name: str, db: str = DATABASE_NAME) -> bool:
+    result: MySQLdb.result
+
+    query = f"""SHOW TRIGGERS FROM {db} WHERE `Trigger` LIKE '{name}';"""
+
+    connection.query(query)
+
+    result = connection.store_result()
+
+    rows = result.fetch_row()
+
+    if len(rows) <= 0:
+        return False
+
+    return True
+
+
+def delete_trigger(connection: MySQLdb.connection, name: str):
+    connection.query(f"""DROP TRIGGER {name};""")
 
 
 def has_database(connection: MySQLdb.connection, name: str) -> bool:
@@ -92,7 +114,7 @@ def create_tables(connection: MySQLdb.connection):
         print(f"You have the {FarmerDatabase.table_name} table. Not modifying it.")
 
     check_and_insert: [GenericData] = [ProductLinesData, EmployeeData, CustomerData, PaymentsData, OfficesData,
-                                       OrdersData, ProductsData, OrderDetailsData]
+                                       OrdersData, ProductsData, OrderDetailsData, TestDatabase]
 
     for datum in check_and_insert:
         if not has_table(connection, datum.table_name):
@@ -144,6 +166,21 @@ def create_users(connection: MySQLdb.Connection):
         print()
 
 
+def create_triggers(connection: MySQLdb.connection):
+    for trigger in triggers:
+
+        if not has_trigger(connection, trigger.name):
+
+            query = trigger.generate_trigger()
+
+            print(f"Making trigger '{trigger.name}'.")
+            print(query)
+
+            connection.query(query)
+        else:
+            print(f"Trigger '{trigger.name}' already exists.")
+
+
 if __name__ == '__main__':
     username, password = get_login_creds(os.path.join(PROJECT_DIR, LOGIN_FILE_NAME))
 
@@ -168,3 +205,5 @@ if __name__ == '__main__':
     create_tables(connection)
 
     create_users(connection)
+
+    create_triggers(connection)

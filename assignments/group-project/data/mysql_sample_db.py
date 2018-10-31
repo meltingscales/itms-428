@@ -15,6 +15,19 @@ class MySQLSampleDB(object):
     path = os.path.join(PROJECT_DIR, 'data/mysqlsampledatabase.sql')
 
 
+class TestDatabase(object):
+    table_name = 'test_table'
+    table_def = f"""CREATE TABLE `{table_name}` (
+        `id`    INTEGER NOT NULL AUTO_INCREMENT,
+        `meta`  VARCHAR(50),
+        PRIMARY KEY (`id`));
+    """
+
+    insert_statements = f"""INSERT INTO `{table_name}` VALUES
+    (0, "potato"),
+    (1, "tomato")"""
+
+
 class FarmerDatabase(object):
     table_name = 'farmer_payment'
     data_filepath = os.path.join(PROJECT_DIR, 'data/2008_farmer_payment_data.big.txt')
