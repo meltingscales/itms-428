@@ -15,7 +15,7 @@ class MySQLSampleDB(object):
     path = os.path.join(PROJECT_DIR, 'data/mysqlsampledatabase.sql')
 
 
-class TestDatabase(object):
+class TestDatabase(GenericData):
     table_name = 'test_table'
     table_def = f"""CREATE TABLE `{table_name}` (
         `id`    INTEGER NOT NULL AUTO_INCREMENT,
@@ -24,8 +24,19 @@ class TestDatabase(object):
     """
 
     insert_statements = f"""INSERT INTO `{table_name}` VALUES
-    (0, "potato"),
-    (1, "tomato")"""
+    (1, "potato"),
+    (2, "tomato");"""
+
+
+class StatsDatabase(GenericData):
+    table_name = 'stats_table'
+    table_def = f"""CREATE TABLE `{table_name}` (
+        `table_name`        VARCHAR(100)    NOT NULL,
+        `meta`              VARCHAR(50),
+        PRIMARY KEY (`table_name`));
+    )"""
+
+    insert_statements = None  # nop
 
 
 class FarmerDatabase(object):

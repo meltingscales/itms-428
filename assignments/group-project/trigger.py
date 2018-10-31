@@ -1,6 +1,3 @@
-from data.mysql_sample_db import TestDatabase
-
-
 class Trigger(object):
     name = "iamatrigger"
     trigger = f"""INSERT INTO """
@@ -14,11 +11,11 @@ class Trigger(object):
 
 
 triggers = [
-    Trigger('coolertrigger', f"""CREATE TRIGGER {"{name}"}
-    AFTER INSERT ON {TestDatabase.table_name}
-    FOR EACH ROW
-    BEGIN
-        INSERT INTO {TestDatabase.table_name} VALUES (NULL, "hello!");
-    END;
-    """)
+    # Trigger('coolertrigger', f"""CREATE TRIGGER {"{name}"}
+    # AFTER INSERT ON {TestDatabase.table_name}
+    # FOR EACH ROW
+    # BEGIN
+    #     INSERT INTO {StatsDatabase.table_name} VALUES ("{TestDatabase.table_name}", "hello!");
+    # END;
+    # """)
 ]
