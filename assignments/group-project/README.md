@@ -77,3 +77,12 @@ Inside this folder, there is a `flask` folder.
 To run my Flask web apps contained inside that folder, simply run:
 
 	pipenv run python <the_web_app_name>.py
+  
+# NOTES
+
+Should I ever add any dependencies to this project's `Pipfile`, and you find yourself
+getting errors like:
+
+    ModuleNotFoundError: No module named 'flaskext'
+
+Run `pipenv install` to update your Python virtual environment.
