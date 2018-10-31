@@ -114,7 +114,7 @@ def create_tables(connection: MySQLdb.connection):
         print(f"You have the {FarmerDatabase.table_name} table. Not modifying it.")
 
     check_and_insert: [GenericData] = [ProductLinesData, EmployeeData, CustomerData, PaymentsData, OfficesData,
-                                       OrdersData, ProductsData, OrderDetailsData, TestDatabase]
+                                       OrdersData, ProductsData, OrderDetailsData, TestDatabase, StatsDatabase]
 
     for datum in check_and_insert:
         if not has_table(connection, datum.table_name):
@@ -126,11 +126,12 @@ def create_tables(connection: MySQLdb.connection):
                 print(e)
                 print(datum.table_def)
 
-            try:
-                connection.query(datum.insert_statements)
-            except Exception as e:
-                print(e)
-                print(datum.insert_statements)
+            if datum.insert_statements is not None:
+                try:
+                    connection.query(datum.insert_statements)
+                except Exception as e:
+                    print(e)
+                    print(datum.insert_statements)
         else:
             print(f"You have the {datum.table_name} table. Not modifying it.")
 
@@ -175,7 +176,6 @@ def create_triggers(connection: MySQLdb.connection):
 
             print(f"Making trigger '{trigger.name}'.")
             print(query)
-
             connection.query(query)
         else:
             print(f"Trigger '{trigger.name}' already exists.")
