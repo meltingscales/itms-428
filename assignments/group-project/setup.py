@@ -3,6 +3,9 @@ from shared_lib import get_login_creds
 from trigger import triggers
 from user import ALL_USERS
 
+ALL_TABLES: [GenericData] = [ProductLinesData, EmployeeData, CustomerData, PaymentsData, OfficesData, OrdersData,
+                             ProductsData, OrderDetailsData, TestDatabase, StatsDatabase]
+
 
 def has_trigger(connection: MySQLdb.connection, name: str, db: str = DATABASE_NAME) -> bool:
     result: MySQLdb.result
@@ -76,7 +79,6 @@ def has_table(connection: MySQLdb.connection, name: str) -> bool:
     return True
 
 
-
 def create_tables(connection: MySQLdb.connection):
     if not has_table(connection, FarmerDatabase.table_name):
         print(f"You don't have the {FarmerDatabase.table_name} table, so we'll make it.")
@@ -85,10 +87,7 @@ def create_tables(connection: MySQLdb.connection):
     else:
         print(f"You have the {FarmerDatabase.table_name} table. Not modifying it.")
 
-    check_and_insert: [GenericData] = [ProductLinesData, EmployeeData, CustomerData, PaymentsData, OfficesData,
-                                       OrdersData, ProductsData, OrderDetailsData, TestDatabase, StatsDatabase]
-
-    for datum in check_and_insert:
+    for datum in ALL_TABLES:
         if not has_table(connection, datum.table_name):
             print(f"You don't have the {datum.table_name} table, so we'll make it.")
 

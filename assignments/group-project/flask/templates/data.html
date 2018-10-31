@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<section id="data">
+
+    {% for table_name, table_data in data.items() %}
+    <section>
+        <h1>{{ table_name }}</h1>
+        <table>
+            <tr>
+                {% for header_name in table_data['header'] %}
+                <th>{{header_name}}</th>
+                {% endfor %}
+            </tr>
+            {% for row in table_data['data'] %}
+            <tr>
+                {% for datum in row %}
+                <td>{{datum}}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    </section>
+    {% endfor %}
+</section>
+{% endblock %}
