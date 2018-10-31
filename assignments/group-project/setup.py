@@ -1,12 +1,12 @@
 from data.mysql_sample_db import *
-from trigger import Trigger, triggers
+from trigger import triggers
 from user import ALL_USERS
 
 
-def has_trigger(connection: MySQLdb.connection, name: str) -> bool:
+def has_trigger(connection: MySQLdb.connection, name: str, db: str = DATABASE_NAME) -> bool:
     result: MySQLdb.result
 
-    query = f"""SHOW TRIGGERS LIKE `{name}`;"""
+    query = f"""SHOW TRIGGERS FROM {db} WHERE `Trigger` LIKE '{name}';"""
 
     connection.query(query)
 
@@ -167,7 +167,6 @@ def create_users(connection: MySQLdb.Connection):
 
 
 def create_triggers(connection: MySQLdb.connection):
-
     for trigger in triggers:
 
         if not has_trigger(connection, trigger.name):
@@ -180,6 +179,7 @@ def create_triggers(connection: MySQLdb.connection):
             connection.query(query)
         else:
             print(f"Trigger '{trigger.name}' already exists.")
+
 
 if __name__ == '__main__':
     username, password = get_login_creds(os.path.join(PROJECT_DIR, LOGIN_FILE_NAME))
