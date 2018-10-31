@@ -12,7 +12,7 @@ class GenericData(object):
 
 
 class MySQLSampleDB(object):
-    path = os.path.join(PROJECT_DIR, 'data/mysqlsampledatabase.sql')
+    path = os.path.join(Config.PROJECT_DIR, 'data/mysqlsampledatabase.sql')
 
 
 class UsersDatabase(GenericData):
@@ -59,7 +59,7 @@ class StatsDatabase(GenericData):
 
 class FarmerDatabase(object):
     table_name = 'farmer_payment'
-    data_filepath = os.path.join(PROJECT_DIR, 'data/2008_farmer_payment_data.big.txt')
+    data_filepath = os.path.join(Config.PROJECT_DIR, 'data/2008_farmer_payment_data.big.txt')
     delimiter = ';'
     limit = 10000
 

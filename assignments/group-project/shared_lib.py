@@ -1,4 +1,4 @@
-from constants import LOGIN_FILE_NAME
+from constants import Config
 
 
 def get_login_creds(path: str) -> (str, str,):
@@ -7,7 +7,7 @@ def get_login_creds(path: str) -> (str, str,):
     try:
         file = open(path, 'r')
     except FileNotFoundError as e:
-        print(f"Please make {LOGIN_FILE_NAME}, and put your username and password in it, separated by a newline.")
+        print(f"Please make {Config.LOGIN_FILE_NAME}, and put your username and password in it, separated by a newline.")
         exit(1)
     except Exception as e:
         print(f"Not sure what went wrong.")
@@ -22,11 +22,10 @@ def get_login_creds(path: str) -> (str, str,):
         lines = lines[0].split('\n')
 
     if len(lines) < 2:
-        print(f"There's less than two lines in {LOGIN_FILE_NAME}.")
+        print(f"There's less than two lines in {Config.LOGIN_FILE_NAME}.")
         print(f"Please make sure you have a username and password in there, separated by a newline.")
         exit(1)
 
     username, password = (item.strip() for item in lines[0:2])
 
     return username, password
-

@@ -7,7 +7,7 @@ ALL_TABLES: [GenericData] = [ProductLinesData, EmployeeData, CustomerData, Payme
                              ProductsData, OrderDetailsData, TestDatabase, StatsDatabase, UsersDatabase]
 
 
-def has_trigger(connection: MySQLdb.connection, name: str, db: str = DATABASE_NAME) -> bool:
+def has_trigger(connection: MySQLdb.connection, name: str, db: str = Config.DATABASE_NAME) -> bool:
     result: MySQLdb.result
 
     query = f"""SHOW TRIGGERS FROM {db} WHERE `Trigger` LIKE '{name}';"""
@@ -153,25 +153,25 @@ def create_triggers(connection: MySQLdb.connection):
 
 
 if __name__ == '__main__':
-    username, password = get_login_creds(os.path.join(PROJECT_DIR, LOGIN_FILE_NAME))
+    username, password = get_login_creds(os.path.join(Config.PROJECT_DIR, Config.LOGIN_FILE_NAME))
 
-    print(f"Using the following credentials from '{LOGIN_FILE_NAME}':")
+    print(f"Using the following credentials from '{Config.LOGIN_FILE_NAME}':")
     print(f'{username}:<PASSWORD>\n')
 
-    connection = MySQLdb.connect(host=SERVER_IP, user=username, passwd=password)
+    connection = MySQLdb.connect(host=Config.SERVER_IP, user=username, passwd=password)
     print(connection)
     print("If you see some stuff in angle brackets above, IT WORKED! CONGRATULES!\n")
 
     # If they don't have the database, create it.
-    if not has_database(connection, DATABASE_NAME):
-        print(f"DB '{DATABASE_NAME}' does not exist. Creating...")
-        connection.query(f"CREATE DATABASE {DATABASE_NAME}")
+    if not has_database(connection, Config.DATABASE_NAME):
+        print(f"DB '{Config.DATABASE_NAME}' does not exist. Creating...")
+        connection.query(f"CREATE DATABASE {Config.DATABASE_NAME}")
     else:
-        print(f"DB '{DATABASE_NAME}' exists.")
+        print(f"DB '{Config.DATABASE_NAME}' exists.")
     print()
 
     # Use the database.
-    connection.query(f'USE {DATABASE_NAME};')
+    connection.query(f'USE {Config.DATABASE_NAME};')
 
     create_tables(connection)
 

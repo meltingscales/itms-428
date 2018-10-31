@@ -2,7 +2,6 @@ import sys
 
 from flaskext.mysql import MySQL
 
-
 sys.path.append('..')  # Allows us to import stuff in above folder.
 
 from data.mysql_sample_db import UsersDatabase
@@ -11,16 +10,18 @@ from flask import Flask, render_template
 from shared_lib import get_login_creds
 from constants import *
 
-username, password = get_login_creds(os.path.join('..', LOGIN_FILE_NAME))
+username, password = get_login_creds(os.path.join('..', Config.LOGIN_FILE_NAME))
 
 app = Flask(__name__)
 
 mysql = MySQL()
 
-app.config['MYSQL_DATABASE_HOST'] = SERVER_IP
+app.config['SECRET_KEY'] = 'itsasecret'
+
+app.config['MYSQL_DATABASE_HOST'] = Config.SERVER_IP
 app.config['MYSQL_DATABASE_USER'] = username
 app.config['MYSQL_DATABASE_PASSWORD'] = password
-app.config['MYSQL_DATABASE_DB'] = DATABASE_NAME
+app.config['MYSQL_DATABASE_DB'] = Config.DATABASE_NAME
 
 mysql.init_app(app)
 
@@ -55,7 +56,6 @@ def stats():
 
 @app.route('/admin')
 def admin():
-
     data = {
         UsersDatabase.table_name: {
             'data': (),
@@ -69,10 +69,9 @@ def admin():
     data[UsersDatabase.table_name]['data'] = cursor.fetchall()
 
     cursor.execute(f"SHOW columns FROM {UsersDatabase.table_name};")
-    results = cursor.fetchall() # List of column header infos.
-    results = (result[0] for result in results) # Get first field, the name .
+    results = cursor.fetchall()  # List of column header infos.
+    results = (result[0] for result in results)  # Get first field, the name.
     data[UsersDatabase.table_name]['header'] = results
-
 
     cursor.close()
 

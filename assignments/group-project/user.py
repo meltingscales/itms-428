@@ -34,37 +34,37 @@ class User(object):
 
 
 ALL_USERS = [
-    User(username=f'{DATABASE_NAME}_admin', password='totallysecure',
+    User(username=f'{Config.DATABASE_NAME}_admin', password='totallysecure',
          table_privs={
-             f"{DATABASE_NAME}.*": ["ALL"]
+             f"{Config.DATABASE_NAME}.*": ["ALL"]
          }),
 
-    User(username=f'{DATABASE_NAME}_farmer_payment', password='iamafarmer',
+    User(username=f'{Config.DATABASE_NAME}_farmer_payment', password='iamafarmer',
          table_privs={
-             f"{DATABASE_NAME}.{FarmerDatabase.table_name}": ["SELECT", "CREATE", "UPDATE"]
+             f"{Config.DATABASE_NAME}.{FarmerDatabase.table_name}": ["SELECT", "CREATE", "UPDATE"]
          }),
 
-    User(username=f'{DATABASE_NAME}_product_manager', password='icannotmanage',
+    User(username=f'{Config.DATABASE_NAME}_product_manager', password='icannotmanage',
          table_privs={
-             f"{DATABASE_NAME}.{ProductLinesData.table_name}": ["SELECT", "CREATE", "UPDATE", "DELETE"],
-             f"{DATABASE_NAME}.{ProductsData.table_name}": ["SELECT", "CREATE", "UPDATE", "DELETE"],
-             f"{DATABASE_NAME}.{OfficesData.table_name}": ["SELECT"],
+             f"{Config.DATABASE_NAME}.{ProductLinesData.table_name}": ["SELECT", "CREATE", "UPDATE", "DELETE"],
+             f"{Config.DATABASE_NAME}.{ProductsData.table_name}": ["SELECT", "CREATE", "UPDATE", "DELETE"],
+             f"{Config.DATABASE_NAME}.{OfficesData.table_name}": ["SELECT"],
          }),
 
-    User(username=f"{DATABASE_NAME}_payment_manager", password='cashmoney',
+    User(username=f"{Config.DATABASE_NAME}_payment_manager", password='cashmoney',
          table_privs={
-             f"{DATABASE_NAME}.{PaymentsData.table_name}": ["SELECT", "CREATE", "UPDATE"],
-             f"{DATABASE_NAME}.{OrdersData.table_name}": ["SELECT", "UPDATE"],
-             f"{DATABASE_NAME}.{OrderDetailsData.table_name}": ["SELECT", "UPDATE"],
-             f"{DATABASE_NAME}.{CustomerData.table_name}": ["SELECT"],
-             f"{DATABASE_NAME}.{FarmerDatabase.table_name}": ["SELECT"],
+             f"{Config.DATABASE_NAME}.{PaymentsData.table_name}": ["SELECT", "CREATE", "UPDATE"],
+             f"{Config.DATABASE_NAME}.{OrdersData.table_name}": ["SELECT", "UPDATE"],
+             f"{Config.DATABASE_NAME}.{OrderDetailsData.table_name}": ["SELECT", "UPDATE"],
+             f"{Config.DATABASE_NAME}.{CustomerData.table_name}": ["SELECT"],
+             f"{Config.DATABASE_NAME}.{FarmerDatabase.table_name}": ["SELECT"],
          }),
 
-    User(username=f'{DATABASE_NAME}_human_resources', password='givemeyourorgansmeatbags!!!',
+    User(username=f'{Config.DATABASE_NAME}_human_resources', password='givemeyourorgansmeatbags!!!',
          table_privs={
-             f"{DATABASE_NAME}.{CustomerData.table_name}": ["SELECT", "CREATE", "UPDATE", "DELETE"],
-             f"{DATABASE_NAME}.{EmployeeData.table_name}": ["SELECT", "CREATE", "UPDATE", "DELETE"],
-             f"{DATABASE_NAME}.{OfficesData.table_name}": ["SELECT"],
+             f"{Config.DATABASE_NAME}.{CustomerData.table_name}": ["SELECT", "CREATE", "UPDATE", "DELETE"],
+             f"{Config.DATABASE_NAME}.{EmployeeData.table_name}": ["SELECT", "CREATE", "UPDATE", "DELETE"],
+             f"{Config.DATABASE_NAME}.{OfficesData.table_name}": ["SELECT"],
          }),
 
 ]
