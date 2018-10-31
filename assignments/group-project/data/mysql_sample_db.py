@@ -15,6 +15,24 @@ class MySQLSampleDB(object):
     path = os.path.join(PROJECT_DIR, 'data/mysqlsampledatabase.sql')
 
 
+class UsersDatabase(GenericData):
+    table_name = "users_table"
+    table_def = f"""CREATE TABLE `{table_name}` (
+        `username`      VARCHAR(50)     NOT NULL,
+        `password`      VARCHAR(50)     NOT NULL,
+        PRIMARY KEY (`username`));"""
+
+    insert_statements = f"""INSERT INTO `{table_name}` VALUES
+        ("henry","iliketofarm"),
+        ("dennis","themenace"),
+        ("reshma","coolestmanager"),
+        ("shephalika","uhm, uhh"),
+        ("cody","neversplittheparty"),
+        ("sridhar","flowerbomb!"),
+        ("sunil","notflowerbomb!");
+        """
+
+
 class TestDatabase(GenericData):
     table_name = 'test_table'
     table_def = f"""CREATE TABLE `{table_name}` (
