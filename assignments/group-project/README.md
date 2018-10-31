@@ -61,6 +61,19 @@ I'll have you all use MySQL because of its popularity, and because it's easy to 
    
 That's it for setup!
 
-To run any script, use `pipenv run python script_name.py`.
+To run any script, use
 
-To run my database setup script, run `pipenv run python setup.py`.
+    pipenv run python script_name.py
+
+
+To run my database setup script, run
+
+    pipenv run python setup.py
+
+# RUNNING MY FLASK EXAMPLES
+
+Inside this folder, there is a `flask` folder.
+
+To run my Flask web apps contained inside that folder, simply run:
+
+	pipenv run python <the_web_app_name>.py
