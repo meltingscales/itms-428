@@ -1,16 +1,17 @@
+import os
 import sys
 
 from flaskext.mysql import MySQL
 
-from forms import LoginForm
+import forms
+from mysql_helper import login_valid, user_exists
+from shared_lib import get_login_creds
 
 sys.path.append('..')  # Allows us to import stuff in above folder.
 
-from data.mysql_sample_db import UsersDatabase
+from data.mysql_sample_db import UsersDatabase, Config
 
-from flask import Flask, render_template, flash, redirect
-from shared_lib import get_login_creds
-from constants import *
+from flask import render_template, flash, redirect, url_for, Flask
 
 username, password = get_login_creds(os.path.join('..', Config.LOGIN_FILE_NAME))
 
@@ -28,46 +29,6 @@ app.config['MYSQL_DATABASE_DB'] = Config.DATABASE_NAME
 mysql.init_app(app)
 
 connection = mysql.connect()
-
-
-def user_exists(username: str) -> bool:
-    cursor = connection.cursor()
-
-    cursor.execute(f"""
-    SELECT
-        COUNT(*)
-    FROM 
-        {UsersDatabase.table_name}
-    WHERE 
-        username LIKE "{username}" """)
-
-    x = cursor.fetchone()
-
-    cursor.close()
-
-    return x[0] > 0
-
-
-def login_valid(username: str, password: str) -> bool:
-    """ Does this username and password combination exist? """
-
-    cursor = connection.cursor()
-
-    cursor.execute(f"""
-        SELECT
-            COUNT(*)
-        FROM
-            {UsersDatabase.table_name}
-        WHERE 
-            username LIKE "{username}" 
-                AND
-            password LIKE "{password}";""")
-
-    x = cursor.fetchone()
-
-    cursor.close()
-
-    return x[0] > 0
 
 
 @app.route("/")
@@ -119,7 +80,7 @@ def admin():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
+    form = forms.LoginForm()
 
     if form.validate_on_submit():
 
@@ -131,7 +92,7 @@ def login():
         else:
             flash("Login is incorrect.")
 
-        return redirect('../')
+        return redirect(url_for('main'))
 
     return render_template('login.html', title="Sign in", form=form)
 
@@ -140,8 +101,8 @@ if __name__ == '__main__':
     app.run()
 
     # Sanity checks.
-    assert (login_valid("henry", "iliketofarm"))
-    assert (not login_valid("henry", "notafarmer"))
+    assert (login_valid("henry", "iliketofarm", connection))
+    assert (not login_valid("henry", "notafarmer", connection))
 
-    assert (user_exists("henry"))
-    assert (not user_exists("tiffany_the_lord_of_squids"))
+    assert (user_exists("henry", connection))
+    assert (not user_exists("tiffany_the_lord_of_squids", connection))
