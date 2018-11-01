@@ -48,7 +48,7 @@ def user_exists(username: str) -> bool:
     return x[0] > 0
 
 
-def login(username: str, password: str) -> bool:
+def login_valid(username: str, password: str) -> bool:
     """ Does this username and password combination exist? """
 
     cursor = connection.cursor()
@@ -122,8 +122,14 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
+
         flash('Login requested for user {}, remember_me={}'.format(
             form.username.data, form.remember_me.data))
+
+        if login_valid(username=form.username.data, password=form.password.data):
+            flash("Login is correct. Welcome, {}!".format(form.username.data))
+        else:
+            flash("Login is incorrect.")
 
         return redirect('../')
 
@@ -134,8 +140,8 @@ if __name__ == '__main__':
     app.run()
 
     # Sanity checks.
-    assert (login("henry", "iliketofarm"))
-    assert (not login("henry", "notafarmer"))
+    assert (login_valid("henry", "iliketofarm"))
+    assert (not login_valid("henry", "notafarmer"))
 
     assert (user_exists("henry"))
     assert (not user_exists("tiffany_the_lord_of_squids"))
