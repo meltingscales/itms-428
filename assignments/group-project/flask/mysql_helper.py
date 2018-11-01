@@ -1,4 +1,8 @@
+import sys
+
 from MySQLdb import Connection
+
+sys.path.append('..')
 
 from data.mysql_sample_db import UsersDatabase
 

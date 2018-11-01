@@ -87,7 +87,7 @@ def login():
         flash('Login requested for user {}, remember_me={}'.format(
             form.username.data, form.remember_me.data))
 
-        if login_valid(username=form.username.data, password=form.password.data):
+        if login_valid(username=form.username.data, password=form.password.data, connection=connection):
             flash("Login is correct. Welcome, {}!".format(form.username.data))
         else:
             flash("Login is incorrect.")
