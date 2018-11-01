@@ -8,12 +8,27 @@
 <nav>
     <ul>
         <li><a href="/">Home</a></li>
+        <li><a href="/login">Login</a></li>
         <li><a href="/data">Data</a></li>
         <li><a href="/stats">Stats</a></li>
         <li><a href="/admin">Super secret admin area</a></li>
     </ul>
 </nav>
-{% block body %}
+
+<section id="messages">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</section>
+
+{% block content %}
 {% endblock %}
+
 </body>
 </html>
