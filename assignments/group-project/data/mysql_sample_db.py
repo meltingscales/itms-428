@@ -18,11 +18,13 @@ class MySQLSampleDB(object):
 class UsersDatabase(GenericData):
     table_name = "users_table"
     table_def = f"""CREATE TABLE `{table_name}` (
-        `username`      VARCHAR(50)     NOT NULL,
-        `password`      VARCHAR(50)     NOT NULL,
+        `username`          VARCHAR(50)     NOT NULL,
+        `password`          VARCHAR(50)     NOT NULL,
+        `incorrect_logins`  INTEGER         DEFAULT 0,
+        `last_logged_in`    DATETIME,
         PRIMARY KEY (`username`));"""
 
-    insert_statements = f"""INSERT INTO `{table_name}` VALUES
+    insert_statements = f"""INSERT INTO `{table_name}` (`username`, `password`) VALUES
         ("henry","iliketofarm"),
         ("dennis","themenace"),
         ("reshma","coolestmanager"),
