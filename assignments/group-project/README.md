@@ -74,9 +74,11 @@ To run my database setup script, run
 
 Inside this folder, there is a `flask` folder.
 
+Move into that folder.
+
 To run my Flask web apps contained inside that folder, simply run:
 
-	pipenv run python <the_web_app_name>.py
+	pipenv run python cool_app.py
   
 # NOTES
 
