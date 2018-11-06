@@ -82,12 +82,20 @@ To run my Flask web apps contained inside that folder, simply run:
   
 # NOTES
 
+## DEPENDENCY HELL
 Should I ever add any dependencies to this project's `Pipfile`, and you find yourself
 getting errors like:
 
     ModuleNotFoundError: No module named 'flaskext'
 
 Run `pipenv install` to update your Python virtual environment.
+
+## HOW DO I LOGIN?
+
+MySQL user creds can be found inside of `users.py`.
+
+User logins can be found in `data/mysql_sample_db`, under the
+`UsersDatabase` class.
 
 ## FOR LINUX USERS
 
