@@ -1,3 +1,4 @@
+from flask import flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
@@ -14,15 +15,21 @@ class LoginForm(FlaskForm):
 
     def validate(self):
         rv = FlaskForm.validate(self)
+
+        ret = True
+
         if not rv:
-            return False
+            ret = False
 
         if not user_exists(self.username.data, connection):
             self.username.errors.append("User does not exist.")
-            return False
+            ret = False
 
-        if not login_valid(self.username.data, self.password.data, connection):
+        elif not login_valid(self.username.data, self.password.data, connection):
             self.password.errors.append('Invalid password.')
-            return False
+            ret = False
 
-        return True
+        if not ret:
+            flash("Login is incorrect.")
+
+        return ret

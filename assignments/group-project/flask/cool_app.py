@@ -90,9 +90,6 @@ def login():
         if login_valid(username=form.username.data, password=form.password.data, connection=connection):
             flash("Login is correct. Welcome, {}!".format(form.username.data))
             update_login_time_to_now(form.username.data, connection)
-        else:
-            flash("Login is incorrect.")
-
         return redirect(url_for('main'))
 
     return render_template('login.html', title="Sign in", form=form)
