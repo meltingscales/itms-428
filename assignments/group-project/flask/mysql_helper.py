@@ -22,7 +22,7 @@ def update_login_time(username: str, time: str, connection: Connection) -> None:
     SET 
         last_logged_in = TIME('{time}')
     WHERE
-        username = '{username}';
+        username LIKE '{username}';
     """)
 
 
