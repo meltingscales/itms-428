@@ -4,7 +4,7 @@ import sys
 from flaskext.mysql import MySQL
 
 import forms
-from mysql_helper import login_valid, user_exists
+from mysql_helper import login_valid, user_exists, update_login_time_to_now
 from shared_lib import get_login_creds
 
 sys.path.append('..')  # Allows us to import stuff in above folder.
@@ -89,6 +89,7 @@ def login():
 
         if login_valid(username=form.username.data, password=form.password.data, connection=connection):
             flash("Login is correct. Welcome, {}!".format(form.username.data))
+            update_login_time_to_now(form.username.data, connection)
         else:
             flash("Login is incorrect.")
 
