@@ -3,8 +3,8 @@ from shared_lib import get_login_creds
 from trigger import triggers
 from user import ALL_USERS
 
-ALL_TABLES: [GenericData] = [ProductLinesData, EmployeeData, CustomerData, PaymentsData, OfficesData, OrdersData,
-                             ProductsData, OrderDetailsData, TestDatabase, StatsDatabase, UsersDatabase]
+ALL_TABLES: [GenericData] = [UserTypesDatabase, ProductLinesData, EmployeeData, CustomerData, PaymentsData, OfficesData,
+                             OrdersData, ProductsData, OrderDetailsData, TestDatabase, StatsDatabase, UsersDatabase]
 
 
 def has_trigger(connection: MySQLdb.connection, name: str, db: str = Config.DATABASE_NAME) -> bool:

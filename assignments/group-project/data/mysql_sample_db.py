@@ -15,6 +15,24 @@ class MySQLSampleDB(object):
     path = os.path.join(Config.PROJECT_DIR, 'data/mysqlsampledatabase.sql')
 
 
+class UserTypesDatabase(GenericData):
+    """Types of users.
+
+    This table stores user types, along with their permissions."""
+    table_name = "user_types"
+    table_def = f"""CREATE TABLE `{table_name}` (
+        `id`                    INTEGER         NOT NULL    UNIQUE,
+        `name`                  VARCHAR(50)     NOT NULL    UNIQUE,
+        `can_create_users`      BOOLEAN         NOT NULL,
+        `can_delete_users`      BOOLEAN         NOT NULL,
+        `can_view_users`        BOOLEAN         NOT NULL,
+        PRIMARY KEY (`id`)
+        );"""
+    insert_statements = f"""INSERT INTO `{table_name}` VALUES
+    (0, "admin",    TRUE,  TRUE,  TRUE),
+    (1, "user",     FALSE, FALSE, FALSE);"""
+
+
 class UsersDatabase(GenericData):
     table_name = "users_table"
     table_def = f"""CREATE TABLE `{table_name}` (
@@ -22,16 +40,19 @@ class UsersDatabase(GenericData):
         `password`          VARCHAR(50)     NOT NULL,
         `incorrect_logins`  INTEGER         DEFAULT 0,
         `last_logged_in`    DATETIME,
-        PRIMARY KEY (`username`));"""
+        `user_type`         INTEGER         NOT NULL,
+        PRIMARY KEY (`username`),
+        FOREIGN KEY (`user_type`) REFERENCES `{UserTypesDatabase.table_name}` (`id`)
+    );"""
 
-    insert_statements = f"""INSERT INTO `{table_name}` (`username`, `password`) VALUES
-        ("henry","iliketofarm"),
-        ("dennis","themenace"),
-        ("reshma","coolestmanager"),
-        ("shephalika","uhm, uhh"),
-        ("cody","neversplittheparty"),
-        ("sridhar","flowerbomb!"),
-        ("sunil","notflowerbomb!");
+    insert_statements = f"""INSERT INTO `{table_name}` (`username`, `password`, `user_type`) VALUES
+        ("henry",       "iliketofarm",          0),
+        ("dennis",      "themenace",            0),
+        ("reshma",      "coolestmanager",       0),
+        ("shephalika",  "uhm, uhh",             0), 
+        ("cody",        "neversplittheparty",   0),
+        ("sridhar",     "flowerbomb!",          0),
+        ("sunil",       "notflowerbomb!",       0);
         """
 
 
