@@ -25,6 +25,8 @@ def update_login_time(username: str, time: str, connection: Connection) -> None:
         username LIKE '{username}';
     """)
 
+    cursor.close()
+
 
 def update_login_time_to_now(username: str, connection: Connection) -> None:
     """Small utility function to update login time to 'right now'."""
