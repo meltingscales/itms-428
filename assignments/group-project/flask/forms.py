@@ -4,7 +4,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
 
 from cool_app import connection
-from mysql_helper import user_exists, login_valid
+from mysql_helper import user_exists, login_valid, login_invalid
 
 
 class LoginForm(FlaskForm):
@@ -15,7 +15,6 @@ class LoginForm(FlaskForm):
 
     def validate(self):
         rv = FlaskForm.validate(self)
-
         ret = True
 
         if not rv:
@@ -27,8 +26,9 @@ class LoginForm(FlaskForm):
 
         elif not login_valid(self.username.data, self.password.data, connection):
             self.password.errors.append('Invalid password.')
+            login_invalid(self.username.data, self.password.data, connection)
             ret = False
-
+        
         if not ret:
             flash("Login is incorrect.")
 

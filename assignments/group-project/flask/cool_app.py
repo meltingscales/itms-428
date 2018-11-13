@@ -92,6 +92,13 @@ def login():
             update_login_time_to_now(form.username.data, connection)
         return redirect(url_for('main'))
 
+    else:
+        if not user_exists(form.username.data, connection):
+            flash(" Please check the userID {}! ".format(form.username.data))  
+        else:
+            flash("Hi, {}! you have entered an incorrect password".format(form.username.data))
+
+
     return render_template('login.html', title="Sign in", form=form)
 
 

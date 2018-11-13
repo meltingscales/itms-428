@@ -7,7 +7,7 @@ sys.path.append('..')
 
 from data.mysql_sample_db import UsersDatabase
 
-
+cnt = 0
 def get_current_datetime() -> str:
     """Gives you a mySQL-friendly string that's the current datetime."""
     return datetime.datetime.now().strftime('%y-%m-%d %H:%M:%S.%f')
@@ -48,13 +48,13 @@ def user_exists(username: str, connection: Connection) -> bool:
     x = cursor.fetchone()
 
     cursor.close()
-
+    #print(x)
     return x[0] > 0
 
 
 def login_valid(username: str, password: str, connection: Connection) -> bool:
     """ Does this username and password combination exist? """
-
+    
     cursor = connection.cursor()
 
     cursor.execute(f"""
@@ -68,7 +68,21 @@ def login_valid(username: str, password: str, connection: Connection) -> bool:
             password LIKE "{password}";""")
 
     x = cursor.fetchone()
-
     cursor.close()
 
     return x[0] > 0
+
+def login_invalid(username: str, password: str, connection: Connection) -> None:
+    """ A bunch of code that should disable the login attemps for 300 seconds """
+    
+    cursor = connection.cursor()
+    
+    cursor.execute(f"""  UPDATE 
+        {UsersDatabase.table_name}
+    SET 
+        incorrect_logins = incorrect_logins + 1 
+    WHERE
+        username LIKE '{username}';
+        """)
+    
+    cursor.close()
