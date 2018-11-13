@@ -111,15 +111,27 @@ def login_valid(username: str, password: str, connection: Connection) -> bool:
 
 def login_invalid(username: str, password: str, connection: Connection) -> None:
     """ A bunch of code that should disable the login attemps for 300 seconds """
-
+    count = 0
     cursor = connection.cursor()
 
+    count = cursor.execute(f"""
+        SELECT
+            incorrect_logins
+        FROM
+            {UsersDatabase.table_name}
+        WHERE 
+            username LIKE "{username}";
+            """)
+    print(count)
+    if count > 3:
+        print("Freeze login", count)
+        
     cursor.execute(f"""  UPDATE 
         {UsersDatabase.table_name}
     SET 
         incorrect_logins = incorrect_logins + 1 
     WHERE
         username LIKE '{username}';
-        """)
-
+        """)  
+    
     cursor.close()

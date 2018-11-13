@@ -22,14 +22,18 @@ class LoginForm(FlaskForm):
 
         if not user_exists(self.username.data, connection):
             self.username.errors.append("User does not exist.")
+            flash(" Please check the userID {}! ".format(self.username.data))  
             ret = False
 
         elif not login_valid(self.username.data, self.password.data, connection):
             self.password.errors.append('Invalid password.')
+            flash("Hi, {}! you have entered an incorrect password".format(self.username.data))
             login_invalid(self.username.data, self.password.data, connection)
             ret = False
         
         if not ret:
             flash("Login is incorrect.")
+        
+
 
         return ret
