@@ -8,6 +8,40 @@ sys.path.append('..')
 from data.mysql_sample_db import UsersDatabase
 
 
+def dump_table_to_dict(table_name: str, connection: Connection):
+    """Given a table name, return a dictionary that contains all its data.
+    Example:
+
+        foo('users_table', <CONNECTION_OBJECT>) -> {
+            'data': (
+                ('henry','iliketofarm', ...),
+                ('reshma','coolestmanager', ...),
+            ),
+            'header': ('username', 'password', ...),
+        }
+        """
+
+    data = {
+        table_name: {
+            'data': (),
+            'header': (),
+        }
+    }
+
+    cursor = connection.cursor()
+
+    cursor.execute(f"SELECT * FROM {table_name};")
+    data[table_name]['data'] = cursor.fetchall()
+
+    cursor.execute(f"SHOW columns FROM {table_name};")
+    results = cursor.fetchall()  # List of column header infos.
+    results = (result[0] for result in results)  # Get first field, the name.
+    data[table_name]['header'] = results
+
+    cursor.close()
+
+    return data
+
 def get_current_datetime() -> str:
     """Gives you a mySQL-friendly string that's the current datetime."""
     return datetime.datetime.now().strftime('%y-%m-%d %H:%M:%S.%f')

@@ -4,7 +4,7 @@ import sys
 from flaskext.mysql import MySQL
 
 import forms
-from mysql_helper import login_valid, user_exists, update_login_time_to_now
+from mysql_helper import login_valid, user_exists, update_login_time_to_now, dump_table_to_dict
 from shared_lib import get_login_creds
 
 sys.path.append('..')  # Allows us to import stuff in above folder.
@@ -57,25 +57,7 @@ def stats():
 
 @app.route('/admin')
 def admin():
-    data = {
-        UsersDatabase.table_name: {
-            'data': (),
-            'header': (),
-        }
-    }
-
-    cursor = connection.cursor()
-
-    cursor.execute(f"SELECT * FROM {UsersDatabase.table_name};")
-    data[UsersDatabase.table_name]['data'] = cursor.fetchall()
-
-    cursor.execute(f"SHOW columns FROM {UsersDatabase.table_name};")
-    results = cursor.fetchall()  # List of column header infos.
-    results = (result[0] for result in results)  # Get first field, the name.
-    data[UsersDatabase.table_name]['header'] = results
-
-    cursor.close()
-    return render_template('data.html', data=data)
+    return render_template('data.html', data=dump_table_to_dict(UsersDatabase.table_name, connection))
 
 
 @app.route('/login', methods=['GET', 'POST'])
