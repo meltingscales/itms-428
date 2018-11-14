@@ -44,8 +44,13 @@ def dump_table_to_dict(table_name: str, connection: Connection):
 
 
 def get_current_datetime() -> str:
-    """Gives you a mySQL-friendly string that's the current datetime."""
-    return datetime.datetime.now().strftime('%y-%m-%d %H:%M:%S.%f')
+    """Gives you a MySQL-friendly string that's the current datetime."""
+    return mysql_friendly_datetime(datetime.datetime.now())
+
+
+def mysql_friendly_datetime(dt: datetime) -> str:
+    """Turns a `datetime` object into a MySQL DATETIME format."""
+    return dt.strftime('%y-%m-%d %H:%M:%S.%f')
 
 
 def update_login_time(username: str, time: str, connection: Connection) -> None:
@@ -125,13 +130,13 @@ def login_invalid(username: str, password: str, connection: Connection) -> None:
     print(count)
     if count > 3:
         print("Freeze login", count)
-        
+
     cursor.execute(f"""  UPDATE 
         {UsersDatabase.table_name}
     SET 
         incorrect_logins = incorrect_logins + 1 
     WHERE
         username LIKE '{username}';
-        """)  
-    
+        """)
+
     cursor.close()
