@@ -55,6 +55,24 @@ class UsersDatabase(GenericData):
         ("sunil",       "notflowerbomb!",       0);
         """
 
+class SecurityTrainingRecordsDatabase(GenericData):
+    table_name = "security_training_records"
+    table_def = f"""CREATE TABLE `{table_name}` (
+        `username`          VARCHAR(50)     NOT NULL,
+        `str_up_to_date`    BOOLEAN,
+        `str_last_updated`  DATE,
+        PRIMARY KEY (`username`)
+    );"""
+
+    insert_statements = f"""INSERT INTO `{table_name}` (`username`, `str_up_to_date`, `str_last_updated`) VALUES
+        ("henry",       TRUE,       '2018-11-08'),
+        ("dennis",      TRUE,       '2018-11-08'),
+        ("reshma",      TRUE,       '2018-11-08'),
+        ("shephalika",  TRUE,       '2018-11-08'), 
+        ("cody",        TRUE,       '2018-11-08'),
+        ("sridhar",     TRUE,       '2018-11-08'),
+        ("sunil",       TRUE,       '2018-11-08');
+        """
 
 class TestDatabase(GenericData):
     table_name = 'test_table'

@@ -4,7 +4,7 @@ from trigger import triggers
 from user import ALL_USERS
 
 ALL_TABLES: [GenericData] = [UserTypesDatabase, ProductLinesData, EmployeeData, CustomerData, PaymentsData, OfficesData,
-                             OrdersData, ProductsData, OrderDetailsData, TestDatabase, StatsDatabase, UsersDatabase]
+                             OrdersData, ProductsData, OrderDetailsData, TestDatabase, StatsDatabase, UsersDatabase, SecurityTrainingRecordsDatabase]
 
 
 def has_trigger(connection: MySQLdb.connection, name: str, db: str = Config.DATABASE_NAME) -> bool:
