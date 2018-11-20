@@ -1,3 +1,5 @@
+from flask import flash
+from flask_wtf import FlaskForm
 import datetime
 import sys
 
@@ -116,10 +118,9 @@ def login_valid(username: str, password: str, connection: Connection) -> bool:
 
 def login_invalid(username: str, password: str, connection: Connection) -> None:
     """ A bunch of code that should disable the login attemps for 300 seconds """
-    count = 0
+    
     cursor = connection.cursor()
-
-    count = cursor.execute(f"""
+    cursor.execute(f"""
         SELECT
             incorrect_logins
         FROM
@@ -127,16 +128,27 @@ def login_invalid(username: str, password: str, connection: Connection) -> None:
         WHERE 
             username LIKE "{username}";
             """)
-    print(count)
-    if count > 3:
-        print("Freeze login", count)
-
-    cursor.execute(f"""  UPDATE 
-        {UsersDatabase.table_name}
-    SET 
-        incorrect_logins = incorrect_logins + 1 
-    WHERE
-        username LIKE '{username}';
-        """)
-
+    cnt = int(cursor.fetchone()[0])
+    #flash(cnt)
     cursor.close()
+    cursor1 = connection.cursor()
+    if cnt < 3:
+        cursor1.execute(f"""  
+                       UPDATE 
+                       {UsersDatabase.table_name}
+                       SET 
+                       incorrect_logins = incorrect_logins + 1 
+                       WHERE
+                       username LIKE '{username}';
+                       """)
+        cursor1.close()
+    else:  
+        cursor1.execute(f"""  
+                   UPDATE 
+                   {UsersDatabase.table_name}
+                   SET 
+                   incorrect_logins = 0
+                   WHERE
+                   username LIKE '{username}';
+                   """)
+        cursor1.close()
