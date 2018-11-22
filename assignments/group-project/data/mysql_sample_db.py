@@ -31,7 +31,7 @@ class UserTypesDatabase(GenericData):
     insert_statements = f"""INSERT INTO `{table_name}` VALUES
     (0, "admin",    TRUE,  TRUE,  TRUE),
     (1, "user",     FALSE, FALSE, FALSE);"""
-
+    
 
 class UsersDatabase(GenericData):
     table_name = "users_table"
@@ -39,6 +39,7 @@ class UsersDatabase(GenericData):
         `username`          VARCHAR(50)     NOT NULL,
         `password`          VARCHAR(50)     NOT NULL,
         `incorrect_logins`  INTEGER         DEFAULT 0,
+        `freezestarttime`   DATETIME,
         `last_logged_in`    DATETIME,
         `user_type`         INTEGER         NOT NULL,
         PRIMARY KEY (`username`),
