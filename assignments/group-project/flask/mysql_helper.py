@@ -120,24 +120,33 @@ def login_valid(username: str, password: str, connection: Connection) -> bool:
     """ Does this username and password combination exist? """
 
     cursor = connection.cursor()
-
     cursor.execute(f"""
         SELECT
-            COUNT(*)
+            incorrect_logins
         FROM
             {UsersDatabase.table_name}
         WHERE 
-            username LIKE "{username}" 
-                AND
-            password LIKE "{password}";""")
-
-    x = cursor.fetchone()
-
+            username LIKE "{username}";
+            """)
+    cnt = int(cursor.fetchone()[0])
     cursor.close()
-
-    return x[0] > 0
-
-
+    cursor1 = connection.cursor()
+    if cnt < 3:
+        cursor1.execute(f"""
+                       SELECT
+                       COUNT(*)
+                       FROM
+                       {UsersDatabase.table_name}
+                       WHERE 
+                       username LIKE "{username}" 
+                       AND
+                       password LIKE "{password}";""")
+        x = cursor1.fetchone()
+        cursor1.close()
+        return x[0] > 0
+    else:
+        freeze_window(username, password, connection)
+        
 def login_invalid(username: str, password: str, connection: Connection) -> None:
     """ A bunch of code that should disable the login attemps for 300 seconds """
     
@@ -193,10 +202,11 @@ def freeze_window(username: str, password: str, connection: Connection):
     starttime = cursor3.fetchone()[0]
     flash(starttime)
     cursor3.close()
-    print(starttime)
-    endtime = starttime + datetime.timedelta(seconds=30)
+    print("starttime ",starttime)
+    endtime = starttime + datetime.timedelta(seconds=45)
+    print("endtime ", endtime)
     cursor2 = connection.cursor()
-    if starttime <= endtime:
+    if endtime < datetime.datetime.now():
         cursor2.execute(f"""  
                    UPDATE 
                    {UsersDatabase.table_name}
@@ -208,6 +218,6 @@ def freeze_window(username: str, password: str, connection: Connection):
         cursor2.close()
         sys.exit()
     else:
-        flash("Your account is locked for 30 seconds, due to multiple failure attemps")
+        flash("Your account is locked for 45 seconds, due to multiple failure attemps")
         
     
