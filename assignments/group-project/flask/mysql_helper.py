@@ -50,6 +50,12 @@ def get_current_datetime() -> str:
     """Gives you a MySQL-friendly string that's the current datetime."""
     return mysql_friendly_datetime(datetime.datetime.now())
 
+
+def display_datetime() -> str:
+    """Gives you a MySQL-friendly string that's the current datetime."""
+    return mysql_display_datetime(datetime.datetime.now())
+
+
 def get_current_datetimee() -> str:
     """Gives you a MySQL-friendly string that's the current datetime."""
     return datetime.datetime.now()
@@ -57,6 +63,11 @@ def get_current_datetimee() -> str:
 def mysql_friendly_datetime(dt: datetime) -> str:
     """Turns a `datetime` object into a MySQL DATETIME format."""
     return dt.strftime('%y-%m-%d %H:%M:%S.%f')
+
+def mysql_display_datetime(dt: datetime) -> str:
+    """Turns a `datetime` object into a MySQL DATETIME format."""
+    return dt.strftime('%y-%m-%d %H:%M:%S')
+
 
 
 def update_login_time(username: str, time: str, connection: Connection) -> None:
