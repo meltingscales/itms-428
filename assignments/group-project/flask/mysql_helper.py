@@ -11,7 +11,7 @@ sys.path.append('..')
 from data.mysql_sample_db import UsersDatabase
 
 
-def dump_table_to_dict(table_name: str, connection: Connection):
+def dump_table_to_dict(table_name: str, connection: Connection, limit=None):
     """Given a table name, return a dictionary that contains all its data.
     Example:
 
@@ -33,7 +33,11 @@ def dump_table_to_dict(table_name: str, connection: Connection):
 
     cursor = connection.cursor()
 
-    cursor.execute(f"SELECT * FROM {table_name};")
+    if limit:
+        cursor.execute(f"SELECT * FROM {table_name} LIMIT {limit};")
+    else:
+        cursor.execute(f"SELECT * FROM {table_name};")
+
     data[table_name]['data'] = cursor.fetchall()
 
     cursor.execute(f"SHOW columns FROM {table_name};")

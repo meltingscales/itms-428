@@ -10,7 +10,7 @@ from shared_lib import get_login_creds
 
 sys.path.append('..')  # Allows us to import stuff in above folder.
 
-from data.mysql_sample_db import UsersDatabase, Config
+from data.mysql_sample_db import UsersDatabase, OrderDetailsData, FarmerDatabase, Config
 
 from flask import render_template, flash, redirect, url_for, Flask
 
@@ -34,9 +34,10 @@ connection = mysql.connect()
 
 @app.route("/")
 def main():
-    message = "Logging in to MySQL with {}:{}, eh?".format(username, "<PASSWORD>")
-
-    return render_template('index.html', message=message)
+    return render_template('data.html', data={  # This odd-looking stuff just merges dictionaries.
+        **dump_table_to_dict(OrderDetailsData.table_name, connection, limit=20),
+        **dump_table_to_dict(FarmerDatabase.table_name, connection, limit=10)
+    })
 
 
 @app.route("/data")
