@@ -6,7 +6,9 @@ from flaskext.mysql import MySQL
 
 import forms
 from mysql_helper import login_valid, user_exists, update_login_time_to_now, dump_table_to_dict
+from setup import ALL_TABLES
 from shared_lib import get_login_creds
+from user import ALL_USERS
 
 sys.path.append('..')  # Allows us to import stuff in above folder.
 
@@ -31,37 +33,6 @@ mysql.init_app(app)
 
 connection = mysql.connect()
 
-
-@app.route("/")
-def main():
-    return render_template('data.html', data={  # This odd-looking stuff just merges dictionaries.
-        **dump_table_to_dict(OrderDetailsData.table_name, connection, limit=20),
-        **dump_table_to_dict(FarmerDatabase.table_name, connection, limit=10)
-    })
-
-
-@app.route("/data")
-def stats():
-    return render_template('data.html', data={
-        'cool_table': {
-            "header": ['ID', 'data'],
-            "data": [['1', 'cool'],
-                     ['2', 'not cool']],
-        },
-        'cooler_table': {
-            "header": ['ID', 'data'],
-            "data": [['3', 'cool'],
-                     ['4', 'not cool']],
-
-        }
-    })
-
-
-@app.route('/admin')
-def admin():
-    return render_template('data.html', data=dump_table_to_dict(UsersDatabase.table_name, connection))
-
-
 superadmin = ['henry', 'shephalika']
 dataadmin = ['sunil', 'cody', 'dennis', 'sridhar']
 
@@ -80,6 +51,25 @@ personnel may provide the evidence of such monitoring
 to law enforcement officials. **********"""
 
 
+@app.route("/")
+def main():
+    return render_template('index.html',
+                           users=len(ALL_USERS), tables=len(ALL_TABLES), dbname=Config.DATABASE_NAME)
+
+
+@app.route("/data")
+def data():
+    return render_template('data.html', data={  # This odd-looking stuff just merges dictionaries.
+        **dump_table_to_dict(OrderDetailsData.table_name, connection, limit=20),
+        **dump_table_to_dict(FarmerDatabase.table_name, connection, limit=10)
+    })
+
+
+@app.route('/admin')
+def admin():
+    return render_template('data.html', data=dump_table_to_dict(UsersDatabase.table_name, connection))
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = forms.LoginForm()
@@ -90,7 +80,8 @@ def login():
         # form.username.data, form.remember_me.data))
 
         if login_valid(username=form.username.data, password=form.password.data, connection=connection):
-            flash("Welcome, {}! Current date and time is {}".format(form.username.data, mysql_helper.display_datetime()))
+            flash(
+                "Welcome, {}! Current date and time is {}".format(form.username.data, mysql_helper.display_datetime()))
 
             update_login_time_to_now(form.username.data, connection)
             # superadmin
