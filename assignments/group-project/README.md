@@ -2,6 +2,8 @@
 
 This folder contains all the materials needed to setup a database for the ITMS 428 group project.
 
+See Google Drive folder [here](https://drive.google.com/open?id=1QxmZx0Z8Zj2jHo1opDDUPcvPuexvju1t).
+
 # EXTRA SETUP FOR LINUX
 
 If you're using Linux, (I tested this on Ubuntu), you'll need to run the following command BEFORE setting up Python.
