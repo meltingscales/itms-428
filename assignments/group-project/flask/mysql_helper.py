@@ -155,7 +155,7 @@ def login_valid(username: str, password: str, connection: Connection) -> bool:
                        WHERE 
                        username LIKE "{username}" 
                        AND
-                       password LIKE "{password}";""")
+                       password LIKE SHA1("{password}");""")
         x = cursor1.fetchone()
         cursor1.close()
         return x[0] > 0

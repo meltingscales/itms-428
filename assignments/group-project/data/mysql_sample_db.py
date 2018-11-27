@@ -47,13 +47,13 @@ class UsersDatabase(GenericData):
     );"""
 
     insert_statements = f"""INSERT INTO `{table_name}` (`username`, `password`, `user_type`) VALUES
-        ("henry",       "iliketofarm",          0),
-        ("dennis",      "themenace",            0),
-        ("reshma",      "coolestmanager",       0),
-        ("shephalika",  "uhm, uhh",             0), 
-        ("cody",        "neversplittheparty",   0),
-        ("sridhar",     "flowerbomb!",          0),
-        ("sunil",       "notflowerbomb!",       0);
+        ("henry",       SHA1('iliketofarm'),          0),
+        ("dennis",      SHA1('themenace'),            0),
+        ("reshma",      SHA1('coolestmanager'),       0),
+        ("shephalika",  SHA1('uhm, uhh'),             0), 
+        ("cody",        SHA1('neversplittheparty'),   0),
+        ("sridhar",     SHA1('flowerbomb!'),          0),
+        ("sunil",       SHA1('notflowerbomb!'),       0);
         """
 
 class SecurityTrainingRecordsDatabase(GenericData):
