@@ -5,7 +5,7 @@ import mysql_helper
 from flaskext.mysql import MySQL
 
 import forms
-from mysql_helper import login_valid, user_exists, update_login_time_to_now, dump_table_to_dict
+from mysql_helper import login_valid, user_exists, update_login_time_to_now, dump_table_to_dict, get_user_last_logged_in
 from setup import ALL_TABLES
 from shared_lib import get_login_creds
 from user import ALL_USERS
@@ -33,7 +33,7 @@ mysql.init_app(app)
 
 connection = mysql.connect()
 
-superadmin = ['henry', 'shephalika']
+superadmin = ['henry', 'shephalika', 'reshma']
 dataadmin = ['sunil', 'cody', 'dennis', 'sridhar']
 
 sysusenotification = """******** This system is for the use of authorized users only.
@@ -83,12 +83,14 @@ def login():
             flash(
                 "Welcome, {}! Current date and time is {}".format(form.username.data, mysql_helper.display_datetime()))
 
+            flash(f"Last logged in on {get_user_last_logged_in(form.username.data, connection)}.")
+
             update_login_time_to_now(form.username.data, connection)
             # superadmin
 
             user = form.username.data
 
-            if user in superadmin:
+            if user in superadmin: # TODO remove hard-coded list and use MySQL queries
                 flash("You have full access to database."
                       "Please be cautious while performing any actions")
                 flash(sysusenotification)
@@ -97,6 +99,7 @@ def login():
                       "database except delete commands")
                 flash(sysusenotification)
             else:
+                flash("Ha! You have no power here!")
                 flash(sysusenotification)
 
         return redirect(url_for('main'))

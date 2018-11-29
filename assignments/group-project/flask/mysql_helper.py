@@ -50,6 +50,21 @@ def dump_table_to_dict(table_name: str, connection: Connection, limit=None):
     return data
 
 
+def get_user_last_logged_in(username: str, connection: Connection):
+    cursor = connection.cursor()
+
+    cursor.execute(f"""
+        SELECT
+            last_logged_in
+        FROM
+            {UsersDatabase.table_name}
+        WHERE 
+            username LIKE "{username}";
+            """)
+
+    return cursor.fetchone()[0]
+
+
 def get_current_datetime() -> str:
     """Gives you a MySQL-friendly string that's the current datetime."""
     return mysql_friendly_datetime(datetime.datetime.now())
@@ -64,14 +79,15 @@ def get_current_datetimee() -> str:
     """Gives you a MySQL-friendly string that's the current datetime."""
     return datetime.datetime.now()
 
+
 def mysql_friendly_datetime(dt: datetime) -> str:
     """Turns a `datetime` object into a MySQL DATETIME format."""
     return dt.strftime('%y-%m-%d %H:%M:%S.%f')
 
+
 def mysql_display_datetime(dt: datetime) -> str:
     """Turns a `datetime` object into a MySQL DATETIME format."""
     return dt.strftime('%y-%m-%d %H:%M:%S')
-
 
 
 def update_login_time(username: str, time: str, connection: Connection) -> None:
@@ -97,11 +113,12 @@ def update_login_time_to_now(username: str, connection: Connection) -> None:
 def update_freezestart_time_to_now(username: str, connection: Connection) -> None:
     """Small utility function to update login time to 'right now'."""
     update_freezestart_time(username, get_current_datetimee(), connection)
-    
-def update_freezestart_time(username: str, time: str, connection: Connection) -> None:
-    cursorx = connection.cursor()
 
-    cursorx.execute(f"""
+
+def update_freezestart_time(username: str, time: str, connection: Connection) -> None:
+    cursor = connection.cursor()
+
+    cursor.execute(f"""
     UPDATE 
         {UsersDatabase.table_name}
     SET 
@@ -110,12 +127,12 @@ def update_freezestart_time(username: str, time: str, connection: Connection) ->
         username LIKE '{username}';
     """)
 
-    cursorx.close()
+    cursor.close()
+
 
 def user_exists(username: str, connection: Connection) -> bool:
     cursor = connection.cursor()
 
-    #
     cursor.execute(f"""
     SELECT
         COUNT(*)
@@ -131,9 +148,7 @@ def user_exists(username: str, connection: Connection) -> bool:
     return x[0] > 0
 
 
-def login_valid(username: str, password: str, connection: Connection) -> bool:
-    """ Does this username and password combination exist? """
-
+def get_incorrect_logins(username: str, connection: Connection) -> int:
     cursor = connection.cursor()
     cursor.execute(f"""
         SELECT
@@ -145,26 +160,37 @@ def login_valid(username: str, password: str, connection: Connection) -> bool:
             """)
     cnt = int(cursor.fetchone()[0])
     cursor.close()
-    cursor1 = connection.cursor()
+
+    return cnt
+
+
+def login_valid(username: str, password: str, connection: Connection) -> bool:
+    """ Does this username and password combination exist? """
+
+    cnt = get_incorrect_logins(username, connection)
+
+    cursor = connection.cursor()
     if cnt < 3:
-        cursor1.execute(f"""
-                       SELECT
-                       COUNT(*)
-                       FROM
-                       {UsersDatabase.table_name}
-                       WHERE 
-                       username LIKE "{username}" 
-                       AND
-                       password LIKE SHA1("{password}");""")
-        x = cursor1.fetchone()
-        cursor1.close()
+        cursor.execute(f"""
+                SELECT
+                    COUNT(*)
+                FROM
+                    {UsersDatabase.table_name}
+                WHERE
+                    username LIKE "{username}" 
+                AND
+                    password LIKE SHA1("{password}");""")
+
+        x = cursor.fetchone()
+        cursor.close()
         return x[0] > 0
     else:
-        freeze_window(username, password, connection)
-        
+        freeze_window(username, connection)
+        return False
+
 def login_invalid(username: str, password: str, connection: Connection) -> None:
     """ A bunch of code that should disable the login attemps for 300 seconds """
-    
+
     cursor = connection.cursor()
     cursor.execute(f"""
         SELECT
@@ -175,7 +201,7 @@ def login_invalid(username: str, password: str, connection: Connection) -> None:
             username LIKE "{username}";
             """)
     cnt = int(cursor.fetchone()[0])
-    #flash(cnt)
+    # flash(cnt)
     cursor.close()
     cursor1 = connection.cursor()
     if cnt < 2:
@@ -199,12 +225,11 @@ def login_invalid(username: str, password: str, connection: Connection) -> None:
                        """)
         cursor1.close()
         update_freezestart_time_to_now(username, connection)
-    else:  
-        
-        freeze_window(username, password, connection)
-        
-        
-def freeze_window(username: str, password: str, connection: Connection):
+    else:
+        freeze_window(username, connection)
+
+
+def freeze_window(username: str, connection: Connection):
     cursor3 = connection.cursor()
     cursor3.execute(f"""
         SELECT
@@ -217,7 +242,7 @@ def freeze_window(username: str, password: str, connection: Connection):
     starttime = cursor3.fetchone()[0]
     flash(starttime)
     cursor3.close()
-    print("starttime ",starttime)
+    print("starttime ", starttime)
     endtime = starttime + datetime.timedelta(seconds=45)
     print("endtime ", endtime)
     cursor2 = connection.cursor()
@@ -231,8 +256,5 @@ def freeze_window(username: str, password: str, connection: Connection):
                    username LIKE '{username}';
                    """)
         cursor2.close()
-        sys.exit()
     else:
         flash("Your account is locked for 45 seconds, due to multiple failure attemps")
-        
-    

@@ -53,7 +53,8 @@ class UsersDatabase(GenericData):
         ("shephalika",  SHA1('uhm, uhh'),             0), 
         ("cody",        SHA1('neversplittheparty'),   0),
         ("sridhar",     SHA1('flowerbomb!'),          0),
-        ("sunil",       SHA1('notflowerbomb!'),       0);
+        ("sunil",       SHA1('notflowerbomb!'),       0),
+        ("guest",       SHA1('givemepermissions'),    1);
         """
 
 class SecurityTrainingRecordsDatabase(GenericData):
